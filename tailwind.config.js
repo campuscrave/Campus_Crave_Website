@@ -8,27 +8,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        purple: {
-          DEFAULT: '#6B2FA0',
-          light: '#8B4FC8',
-          glow: '#A855F7',
-          dim: '#3D1A5E',
-        },
-        dark: {
-          DEFAULT: '#0A0A0F',
-          card: '#12121A',
-          border: '#1E1E2A',
-          surface: '#16161F',
-        },
-        accent: {
-          orange: '#F97316',
-          green: '#22C55E',
-        },
+        'brand-purple': '#6B2FA0',
+        'brand-dark': '#0C0118',
+        'brand-purple-faint': '#F5F3FF',
+        'brand-purple-muted': '#EDE9FE',
+        'surface-warm': '#FAFAF8',
       },
       fontFamily: {
-        outfit: ['Outfit', 'sans-serif'],
-        syne: ['Syne', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        display: ['Outfit', 'sans-serif'],
+        body: ['"Plus Jakarta Sans"', 'sans-serif'],
       },
     },
   },

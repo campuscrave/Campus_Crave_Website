@@ -1,73 +1,70 @@
+import FadeIn from '../components/FadeIn'
 import SectionLabel from '../components/SectionLabel'
 
-const features = [
-  {
-    icon: '⚡',
-    title: 'Instant Reload',
-    desc: 'Top up your balance anytime with a debit or credit card. No waiting, no forms, no bursar office.',
-  },
-  {
-    icon: '🔒',
-    title: 'Separate from Meal Plan',
-    desc: 'Crave Dollars are a distinct currency. Spartan Dollars and meal swipes are completely unaffected.',
-  },
-  {
-    icon: '📊',
-    title: 'Track Your Spending',
-    desc: 'See where your money goes. Order history, spending analytics, and budget tools built in.',
-  },
-  {
-    icon: '🎓',
-    title: 'Campus-Endorsed',
-    desc: 'Every restaurant on the platform is curated and approved. This is not a random delivery app.',
-  },
+const benefits = [
+  'Increase meal plan utilization and perceived value',
+  'Expand dining options without capital investment',
+  'Real-time reporting and transaction oversight',
+  'PCI-compliant payment infrastructure',
+  'White-label option for institutional branding',
+  'Zero integration risk — works alongside existing systems',
 ]
+
+const CheckIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M4 9l3.5 3.5L14 6" />
+  </svg>
+)
+
+const ArrowIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M4 9h10" />
+    <path d="M10 5l4 4-4 4" />
+  </svg>
+)
 
 export default function CraveDollars() {
   return (
-    <section id="crave-dollars">
-      <div className="crave-glow"></div>
-      <div className="section-inner">
-        <div className="crave-grid">
-          <div>
-            <div className="reveal">
-              <SectionLabel>// Crave Dollars</SectionLabel>
-              <div className="section-title">
-                A new currency for<br />campus commerce.
-              </div>
-              <p className="section-desc" style={{ marginBottom: '36px' }}>
-                Crave Dollars are a rechargeable balance that works at every restaurant on the
-                platform. Not a meal plan replacement — a meal plan expansion.
-              </p>
-            </div>
+    <section id="universities" className="bg-brand-dark py-24 md:py-28 px-6 md:px-8">
+      <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-start">
+        {/* Left column */}
+        <div>
+          <FadeIn>
+            <SectionLabel light>For Universities</SectionLabel>
+            <h2
+              className="font-display font-extrabold text-white tracking-[-0.03em] leading-[1.12] mb-5"
+              style={{ fontSize: 'clamp(28px, 4vw, 44px)' }}
+            >
+              Make your meal plan worth more.
+            </h2>
+            <p className="text-white/70 font-body text-[16px] leading-[1.65] max-w-[460px] mb-10">
+              Campus Crave gives dining services a modern platform to extend meal plan value off
+              campus — without replacing existing infrastructure.
+            </p>
+            <a
+              href="mailto:hello@campuscrave.com"
+              className="inline-flex items-center gap-2.5 bg-white text-brand-dark px-6 py-3 rounded-[10px] font-body text-sm font-semibold hover:bg-gray-100 transition-colors"
+            >
+              Partner with us
+              <ArrowIcon />
+            </a>
+          </FadeIn>
+        </div>
 
-            <div className="crave-features">
-              {features.map((feat) => (
-                <div key={feat.title} className="crave-feat reveal">
-                  <div className="crave-feat-icon">{feat.icon}</div>
-                  <div>
-                    <h4>{feat.title}</h4>
-                    <p>{feat.desc}</p>
-                  </div>
+        {/* Right column — benefits */}
+        <div className="flex flex-col gap-3">
+          {benefits.map((benefit, i) => (
+            <FadeIn key={i} delay={i * 0.06}>
+              <div className="flex items-start gap-4 bg-white/[0.04] rounded-xl border border-white/[0.08] py-4 px-5">
+                <div className="w-8 h-8 rounded-lg bg-white/[0.08] flex items-center justify-center flex-shrink-0 mt-0.5 text-purple-300">
+                  <CheckIcon />
                 </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="reveal">
-            <div className="crave-visual">
-              <div className="crave-card">
-                <div className="crave-card-label">Campus Crave Wallet</div>
-                <div className="crave-card-name">Crave Dollars</div>
-                <div className="crave-card-balance-label">Available Balance</div>
-                <div className="crave-card-balance">$247.50</div>
-                <div className="crave-card-row">
-                  <span>University of Tampa</span>
-                  <span>Fall 2026</span>
-                </div>
+                <span className="text-white/80 font-body text-[15px] leading-[1.55]">
+                  {benefit}
+                </span>
               </div>
-            </div>
-          </div>
+            </FadeIn>
+          ))}
         </div>
       </div>
     </section>

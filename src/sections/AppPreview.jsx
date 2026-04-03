@@ -1,109 +1,93 @@
+import FadeIn from '../components/FadeIn'
 import SectionLabel from '../components/SectionLabel'
 
-function AppScreen({ time, title, children }) {
-  return (
-    <div className="app-screen reveal">
-      <div className="app-screen-bar">
-        <span className="time">{time}</span>
-        <div className="dots">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-      </div>
-      <div className="app-screen-title">{title}</div>
-      {children}
-    </div>
-  )
-}
+const UsersIcon = () => (
+  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="10" cy="9" r="3.5" />
+    <path d="M3 23c0-3.9 3.1-7 7-7s7 3.1 7 7" />
+    <circle cx="20" cy="10" r="2.5" />
+    <path d="M20 16c3.3 0 6 2.7 6 6" />
+  </svg>
+)
 
-function AppItem({ emoji, bg, name, sub, price }) {
-  return (
-    <div className="app-item">
-      <div className="app-item-thumb" style={{ background: bg }}>{emoji}</div>
-      <div className="app-item-info">
-        <h4>{name}</h4>
-        <span>{sub}</span>
-      </div>
-      {price && <span className="app-item-price">{price}</span>}
-    </div>
-  )
-}
+const ChartIcon = () => (
+  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M4 24V4" />
+    <path d="M4 24h20" />
+    <path d="M8 17l4-5 4 3 6-7" />
+  </svg>
+)
+
+const WalletIcon = () => (
+  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="6" width="22" height="16" rx="2" />
+    <path d="M3 11h22" />
+    <circle cx="19" cy="17" r="1.5" />
+  </svg>
+)
+
+const ShieldIcon = () => (
+  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14 3L4 7v6c0 5.5 4.3 10.6 10 12 5.7-1.4 10-6.5 10-12V7L14 3z" />
+    <path d="M10 14l3 3 5-5" />
+  </svg>
+)
+
+const cards = [
+  {
+    Icon: UsersIcon,
+    title: 'Reach every student',
+    desc: 'Access the entire student body through a single campus-endorsed platform.',
+  },
+  {
+    Icon: ChartIcon,
+    title: 'Real-time dashboard',
+    desc: 'Track orders, revenue, and peak hours with live analytics and reporting.',
+  },
+  {
+    Icon: WalletIcon,
+    title: 'Reliable payments',
+    desc: 'Get paid on a consistent schedule through our PCI-compliant payment system.',
+  },
+  {
+    Icon: ShieldIcon,
+    title: 'Zero hardware',
+    desc: 'No tablets, no terminals. Orders come through your existing systems.',
+  },
+]
 
 export default function AppPreview() {
   return (
-    <section id="app">
-      <div className="section-inner">
-        <div className="reveal">
-          <SectionLabel>// The App</SectionLabel>
-          <div className="section-title">
-            Built for how students<br />actually order food.
-          </div>
-          <p className="section-desc" style={{ margin: '0 auto 0', textAlign: 'center' }}>
-            Browse curated campus restaurants, customize your order, pay with Crave Dollars, and
-            track your food in real time.
+    <section id="restaurants" className="bg-white py-24 md:py-28 px-6 md:px-8">
+      <div className="max-w-[1200px] mx-auto">
+        <FadeIn>
+          <SectionLabel>For Restaurant Partners</SectionLabel>
+          <h2
+            className="font-display font-extrabold text-gray-900 tracking-[-0.03em] leading-[1.12] mb-5 max-w-[520px]"
+            style={{ fontSize: 'clamp(28px, 4vw, 44px)' }}
+          >
+            Your restaurant. Their meal plan.
+          </h2>
+          <p className="font-body text-[16px] text-gray-500 leading-[1.65] max-w-[520px] mb-12">
+            Join a campus-endorsed marketplace and reach thousands of hungry students — with lower
+            commissions than major delivery apps.
           </p>
-        </div>
+        </FadeIn>
 
-        <div className="app-mockup-container">
-          <AppScreen time="9:41" title="Near Campus">
-            <AppItem emoji="🍋" bg="rgba(34,197,94,0.12)" name="Green Lemon" sub="Mexican · 1.2 mi · 15 min" />
-            <AppItem emoji="🍕" bg="rgba(249,115,22,0.12)" name="Jay Luigi" sub="Pizza · 1.0 mi · 12 min" />
-            <AppItem emoji="🫓" bg="rgba(107,47,160,0.12)" name="Water + Flour" sub="Italian · 1.1 mi · 18 min" />
-            <AppItem emoji="🌮" bg="rgba(234,88,12,0.12)" name="Taco Dirty" sub="Tex-Mex · 0.8 mi · 10 min" />
-          </AppScreen>
-
-          <AppScreen time="9:41" title="Your Order">
-            <AppItem emoji="🍋" bg="rgba(34,197,94,0.12)" name="Chicken Tacos (3)" sub="Pico, sour cream, guac" price="$14.50" />
-            <AppItem emoji="🥤" bg="rgba(34,197,94,0.12)" name="Horchata" sub="Large" price="$4.00" />
-            <div style={{ marginTop: '20px', padding: '16px', background: 'rgba(107,47,160,0.08)', borderRadius: '12px', border: '1px solid rgba(107,47,160,0.2)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '8px' }}>
-                <span style={{ color: 'var(--text-dim)' }}>Subtotal</span>
-                <span>$18.50</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '12px' }}>
-                <span style={{ color: 'var(--text-dim)' }}>Service Fee</span>
-                <span>$3.33</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1rem', fontWeight: 700, paddingTop: '12px', borderTop: '1px solid #E9E4F2' }}>
-                <span>Total</span>
-                <span style={{ color: 'var(--purple-glow)' }}>$21.83</span>
-              </div>
-              <div style={{ marginTop: '14px', background: 'var(--purple)', color: 'white', textAlign: 'center', padding: '12px', borderRadius: '10px', fontSize: '0.88rem', fontWeight: 600, cursor: 'pointer' }}>
-                Pay with Crave Dollars
-              </div>
-            </div>
-          </AppScreen>
-
-          <AppScreen time="9:47" title="Order Status">
-            <div style={{ textAlign: 'center', padding: '24px 0 16px' }}>
-              <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>👨‍🍳</div>
-              <div style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.1rem', fontWeight: 700, marginBottom: '6px' }}>Preparing Your Order</div>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Green Lemon · Est. 12 min</div>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '16px', padding: '0 8px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'var(--accent-green)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem' }}>✓</div>
-                <div>
-                  <div style={{ fontSize: '0.82rem', fontWeight: 600 }}>Order Confirmed</div>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>9:42 AM</div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {cards.map((card, i) => (
+            <FadeIn key={card.title} delay={i * 0.06}>
+              <div className="bg-surface-warm rounded-2xl border border-gray-200 p-8 hover:border-brand-purple-muted transition-colors h-full">
+                <div className="w-[52px] h-[52px] rounded-xl bg-brand-purple-faint flex items-center justify-center text-brand-purple mb-5">
+                  <card.Icon />
                 </div>
+                <h3 className="font-display font-bold text-[18px] text-gray-900 mb-2.5 tracking-[-0.02em]">
+                  {card.title}
+                </h3>
+                <p className="font-body text-[15px] text-gray-500 leading-[1.65]">{card.desc}</p>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'var(--purple)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', animation: 'pulse-dot 2s infinite' }}>⏳</div>
-                <div>
-                  <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--purple-glow)' }}>Being Prepared</div>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>In progress...</div>
-                </div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', opacity: 0.4 }}>
-                <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#E9E4F2', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem' }}>📦</div>
-                <div>
-                  <div style={{ fontSize: '0.82rem', fontWeight: 500 }}>Ready for Pickup</div>
-                </div>
-              </div>
-            </div>
-          </AppScreen>
+            </FadeIn>
+          ))}
         </div>
       </div>
     </section>
