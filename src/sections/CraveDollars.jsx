@@ -1,70 +1,83 @@
-import FadeIn from '../components/FadeIn'
-import SectionLabel from '../components/SectionLabel'
-
 const benefits = [
-  'Increase meal plan utilization and perceived value',
-  'Expand dining options without capital investment',
-  'Real-time reporting and transaction oversight',
-  'PCI-compliant payment infrastructure',
-  'White-label option for institutional branding',
-  'Zero integration risk — works alongside existing systems',
+  'Zero breakage revenue risk — students spend, not forfeit',
+  'Seamless Dining Dollar integration via existing POS',
+  'University-endorsed and student-data compliant',
+  'Real-time spending analytics dashboard',
+  '60-day pilot program — no long-term commitment',
+  'Zero upfront cost to the university',
 ]
 
 const CheckIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M4 9l3.5 3.5L14 6" />
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#4ADE80" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 8l3 3 7-6" />
   </svg>
 )
 
-const ArrowIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M4 9h10" />
-    <path d="M10 5l4 4-4 4" />
-  </svg>
-)
+const stats = [
+  { value: '60 days', label: 'to pilot launch', color: '#8B5CF6' },
+  { value: '$0', label: 'upfront cost to university', color: '#4ADE80' },
+  // TODO: Verify count — Hero says "5 restaurant partners" but this stat says 6. Align before launch.
+  { value: '6', label: 'CRG restaurants at launch', color: '#8B5CF6' },
+  { value: '1,400+', label: 'students in campus radius', color: '#FBB924' },
+]
 
 export default function CraveDollars() {
   return (
-    <section id="universities" className="bg-brand-dark py-24 md:py-28 px-6 md:px-8">
-      <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-start">
-        {/* Left column */}
-        <div>
-          <FadeIn>
-            <SectionLabel light>For Universities</SectionLabel>
-            <h2
-              className="font-display font-extrabold text-white tracking-[-0.03em] leading-[1.12] mb-5"
-              style={{ fontSize: 'clamp(28px, 4vw, 44px)' }}
-            >
-              Make your meal plan worth more.
+    <section
+      id="universities"
+      className="py-24"
+      style={{ width: '100%', background: '#111827' }}
+    >
+      <div className="mx-auto px-6" style={{ maxWidth: 1200 }}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-start">
+          {/* Left column */}
+          <div>
+            <span className="section-label" style={{ color: '#8B5CF6' }}>For Universities</span>
+            <h2 className="mt-3 font-bold text-white" style={{ fontSize: 'clamp(28px, 4vw, 44px)', lineHeight: 1.12 }}>
+              Your dining dollars,<br />
+              <span className="gradient-text">finally off-campus.</span>
             </h2>
-            <p className="text-white/70 font-body text-[16px] leading-[1.65] max-w-[460px] mb-10">
-              Campus Crave gives dining services a modern platform to extend meal plan value off
-              campus — without replacing existing infrastructure.
+            <p className="mt-4 text-base leading-relaxed" style={{ color: '#9CA3AF', maxWidth: 460 }}>
+              CampusCrave is designed to integrate with your existing meal plan infrastructure. No breakage revenue lost. No data risk. Just happier students.
             </p>
-            <a
-              href="mailto:hello@campuscrave.com"
-              className="inline-flex items-center gap-2.5 bg-white text-brand-dark px-6 py-3 rounded-[10px] font-body text-sm font-semibold hover:bg-gray-100 transition-colors"
-            >
-              Partner with us
-              <ArrowIcon />
-            </a>
-          </FadeIn>
-        </div>
 
-        {/* Right column — benefits */}
-        <div className="flex flex-col gap-3">
-          {benefits.map((benefit, i) => (
-            <FadeIn key={i} delay={i * 0.06}>
-              <div className="flex items-start gap-4 bg-white/[0.04] rounded-xl border border-white/[0.08] py-4 px-5">
-                <div className="w-8 h-8 rounded-lg bg-white/[0.08] flex items-center justify-center flex-shrink-0 mt-0.5 text-purple-300">
-                  <CheckIcon />
+            <div className="mt-8 flex flex-col gap-3">
+              {benefits.map((benefit, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <span className="mt-0.5 flex-shrink-0">
+                    <CheckIcon />
+                  </span>
+                  <span style={{ fontSize: 14, color: '#D1D5DB' }}>{benefit}</span>
                 </div>
-                <span className="text-white/80 font-body text-[15px] leading-[1.55]">
-                  {benefit}
-                </span>
+              ))}
+            </div>
+
+            <button
+              className="mt-8 px-6 py-3 font-semibold transition-colors"
+              style={{
+                borderRadius: 10,
+                border: '1px solid rgba(107,33,168,0.5)',
+                color: '#8B5CF6',
+                background: 'transparent',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(107,33,168,0.1)' }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
+              onClick={() => { window.location.href = 'mailto:hello@campuscrave.com?subject=University Partnership Inquiry' }}
+            >
+              Schedule a Partnership Call
+            </button>
+          </div>
+
+          {/* Right column — stat cards */}
+          <div className="grid grid-cols-2 gap-4">
+            {stats.map(({ value, label, color }) => (
+              <div key={label} className="glass-card p-6">
+                <div className="font-bold" style={{ fontSize: '2rem', color }}>{value}</div>
+                <div className="mt-1 text-sm" style={{ color: '#9CA3AF' }}>{label}</div>
               </div>
-            </FadeIn>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>

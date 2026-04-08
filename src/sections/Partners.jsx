@@ -1,50 +1,52 @@
-import FadeIn from '../components/FadeIn'
-import SectionLabel from '../components/SectionLabel'
-
 const restaurants = [
-  { name: 'Green Lemon', cuisine: 'Mexican' },
-  { name: 'Jay Luigi', cuisine: 'Italian' },
-  { name: 'Water + Flour', cuisine: 'Pizza & Pasta' },
-  { name: 'Taco Dirty', cuisine: 'Tacos & Street Food' },
-  { name: 'Daily Eats', cuisine: 'American' },
-  { name: 'Sweet Soul', cuisine: 'Southern & BBQ' },
+  { initials: 'GL',  name: 'Green Lemon',        bg: '#4C1D95', label: 'CRG Partner' },
+  { initials: 'JL',  name: 'Jay Luigi',           bg: '#6B21A8', label: 'CRG Partner' },
+  { initials: 'TD',  name: 'Taco Dirty',          bg: '#5B21B6', label: 'CRG Partner' },
+  { initials: 'SB',  name: 'Starbucks',           bg: '#7C3AED', label: 'On-Campus' },
+  { initials: 'SF',  name: 'Spartan Food Court',  bg: '#6D28D9', label: 'CRG Partner' },
+  { initials: 'CRG', name: 'CRG Group',           bg: '#8B5CF6', label: 'Powered by CRG' },
 ]
 
 export default function Partners() {
   return (
-    <section id="pilot" className="bg-surface-warm py-24 md:py-28 px-6 md:px-8">
-      <div className="max-w-[1200px] mx-auto">
-        <FadeIn>
-          <SectionLabel>Pilot Launch</SectionLabel>
-          <h2
-            className="font-display font-extrabold text-gray-900 tracking-[-0.03em] leading-[1.12] mb-5"
-            style={{ fontSize: 'clamp(28px, 4vw, 44px)' }}
-          >
-            Starting at University of Tampa.
-          </h2>
-          <p className="font-body text-[16px] text-gray-500 leading-[1.65] max-w-[520px] mb-12">
-            Launching with 6 Ciccio Restaurant Group locations within a 1.4-mile campus radius.
-            Pickup-first, with delivery coming in Phase 2.
-          </p>
-        </FadeIn>
+    <section id="partners" className="py-20" style={{ background: '#FAFAF8' }}>
+      <div className="mx-auto px-6 text-center" style={{ maxWidth: 1200 }}>
+        <div className="section-label" style={{ justifyContent: 'center' }}>Pilot Partners</div>
+        <h2 style={{ fontSize: 'clamp(1.75rem, 3vw, 2.5rem)', fontWeight: 700, color: '#0C0118' }}>
+          Launching with 6 CRG restaurants.
+        </h2>
+        <p style={{ color: '#6B7280', maxWidth: 600, margin: '0.75rem auto 0', fontSize: '1rem' }}>
+          The Ciccio Restaurant Group runs Tampa's most beloved campus-area dining spots.
+          CampusCrave launches exclusively with CRG — built on trust and proximity.
+        </p>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {restaurants.map((r, i) => (
-            <FadeIn key={r.name} delay={i * 0.04}>
-              <div className="bg-white rounded-2xl border border-gray-200 p-6 text-center hover:-translate-y-0.5 transition-transform cursor-default">
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-brand-purple-faint to-brand-purple-muted flex items-center justify-center mx-auto mb-4">
-                  <span className="font-display font-bold text-xl text-brand-purple">
-                    {r.name[0]}
-                  </span>
-                </div>
-                <h3 className="font-display font-bold text-[15px] text-gray-900 mb-1">
-                  {r.name}
-                </h3>
-                <p className="font-body text-[13px] text-gray-400">{r.cuisine}</p>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-12">
+          {restaurants.map(({ initials, name, bg, label }) => (
+            <div key={name} className="glass-card p-4 flex flex-col items-center text-center">
+              <div style={{
+                width: 48, height: 48, borderRadius: '50%', background: bg,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto',
+              }}>
+                <span style={{ fontSize: 14, fontWeight: 700, color: 'white' }}>{initials}</span>
               </div>
-            </FadeIn>
+              <p style={{ fontSize: 13, fontWeight: 600, color: '#0C0118', marginTop: '0.75rem' }}>{name}</p>
+              <span style={{
+                fontSize: 10, color: '#8B5CF6',
+                background: 'rgba(107,33,168,0.15)', borderRadius: 10,
+                padding: '0.125rem 0.5rem', marginTop: '0.25rem', display: 'inline-block',
+              }}>
+                {label}
+              </span>
+            </div>
           ))}
         </div>
+
+        <p style={{ marginTop: '2.5rem', fontSize: 13, color: '#6B7280', textAlign: 'center' }}>
+          Starting at University of Tampa
+        </p>
+        <p style={{ marginTop: '0.5rem', fontSize: 12, color: '#9CA3AF', textAlign: 'center', fontStyle: 'italic' }}>
+          Pilot restaurant partners at University of Tampa. Operated by Ciccio Restaurant Group (CRG).
+        </p>
       </div>
     </section>
   )

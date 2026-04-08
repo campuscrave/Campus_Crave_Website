@@ -1,93 +1,73 @@
-import FadeIn from '../components/FadeIn'
-import SectionLabel from '../components/SectionLabel'
-
-const UsersIcon = () => (
-  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="10" cy="9" r="3.5" />
-    <path d="M3 23c0-3.9 3.1-7 7-7s7 3.1 7 7" />
-    <circle cx="20" cy="10" r="2.5" />
-    <path d="M20 16c3.3 0 6 2.7 6 6" />
-  </svg>
-)
-
-const ChartIcon = () => (
-  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M4 24V4" />
-    <path d="M4 24h20" />
-    <path d="M8 17l4-5 4 3 6-7" />
-  </svg>
-)
-
-const WalletIcon = () => (
-  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="3" y="6" width="22" height="16" rx="2" />
-    <path d="M3 11h22" />
-    <circle cx="19" cy="17" r="1.5" />
-  </svg>
-)
-
-const ShieldIcon = () => (
-  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M14 3L4 7v6c0 5.5 4.3 10.6 10 12 5.7-1.4 10-6.5 10-12V7L14 3z" />
-    <path d="M10 14l3 3 5-5" />
-  </svg>
-)
-
 const cards = [
   {
-    Icon: UsersIcon,
-    title: 'Reach every student',
-    desc: 'Access the entire student body through a single campus-endorsed platform.',
+    emoji: '💰',
+    bg: 'rgba(74,222,128,0.12)',
+    title: 'Zero Upfront Cost',
+    desc: 'No setup fees, no monthly subscription. CampusCrave earns a small commission per order — you only pay when you make money.',
   },
   {
-    Icon: ChartIcon,
-    title: 'Real-time dashboard',
-    desc: 'Track orders, revenue, and peak hours with live analytics and reporting.',
+    emoji: '📊',
+    bg: 'rgba(107,33,168,0.12)',
+    title: 'Live Order Dashboard',
+    desc: 'Every order appears instantly on your screen. Manage status, mark as ready, and see analytics — all in a clean web dashboard.',
   },
   {
-    Icon: WalletIcon,
-    title: 'Reliable payments',
-    desc: 'Get paid on a consistent schedule through our PCI-compliant payment system.',
+    emoji: '🎓',
+    bg: 'rgba(251,191,36,0.12)',
+    title: 'Campus-Native Audience',
+    desc: 'Reach students who live 0.3 to 1.4 miles from your location. These aren\'t random app users — they\'re your neighborhood.',
   },
   {
-    Icon: ShieldIcon,
-    title: 'Zero hardware',
-    desc: 'No tablets, no terminals. Orders come through your existing systems.',
+    emoji: '📋',
+    bg: 'rgba(59,130,246,0.12)',
+    title: 'Simple Menu Management',
+    desc: 'Update prices, toggle items off, add new categories — all without calling anyone. Changes go live in seconds.',
   },
 ]
 
 export default function AppPreview() {
   return (
-    <section id="restaurants" className="bg-white py-24 md:py-28 px-6 md:px-8">
-      <div className="max-w-[1200px] mx-auto">
-        <FadeIn>
-          <SectionLabel>For Restaurant Partners</SectionLabel>
-          <h2
-            className="font-display font-extrabold text-gray-900 tracking-[-0.03em] leading-[1.12] mb-5 max-w-[520px]"
-            style={{ fontSize: 'clamp(28px, 4vw, 44px)' }}
-          >
-            Your restaurant. Their meal plan.
+    <section id="restaurants" className="py-20" style={{ background: '#ffffff' }}>
+      <div className="mx-auto px-6" style={{ maxWidth: 1200 }}>
+        <div className="text-center">
+          <span className="section-label">For Restaurants</span>
+          <h2 className="mt-3 font-bold" style={{ fontSize: 'clamp(28px, 4vw, 44px)', lineHeight: 1.12, color: '#0C0118' }}>
+            Your restaurant, on every student&apos;s phone.
           </h2>
-          <p className="font-body text-[16px] text-gray-500 leading-[1.65] max-w-[520px] mb-12">
-            Join a campus-endorsed marketplace and reach thousands of hungry students — with lower
-            commissions than major delivery apps.
+          <p className="mt-4 text-base leading-relaxed mx-auto" style={{ color: '#6B7280', maxWidth: 560 }}>
+            Join the CampusCrave network. Zero upfront cost, zero complexity. Your menu on a campus-native platform that students actually use.
           </p>
-        </FadeIn>
+        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {cards.map((card, i) => (
-            <FadeIn key={card.title} delay={i * 0.06}>
-              <div className="bg-surface-warm rounded-2xl border border-gray-200 p-8 hover:border-brand-purple-muted transition-colors h-full">
-                <div className="w-[52px] h-[52px] rounded-xl bg-brand-purple-faint flex items-center justify-center text-brand-purple mb-5">
-                  <card.Icon />
-                </div>
-                <h3 className="font-display font-bold text-[18px] text-gray-900 mb-2.5 tracking-[-0.02em]">
-                  {card.title}
-                </h3>
-                <p className="font-body text-[15px] text-gray-500 leading-[1.65]">{card.desc}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
+          {cards.map(({ emoji, bg, title, desc }) => (
+            <div key={title} className="glass-card p-6 flex flex-col">
+              <div
+                className="flex items-center justify-center rounded-full mb-4"
+                style={{ width: 52, height: 52, background: bg, fontSize: 24 }}
+              >
+                {emoji}
               </div>
-            </FadeIn>
+              <h3 className="font-bold mb-2" style={{ fontSize: '1.05rem', color: '#0C0118' }}>{title}</h3>
+              <p className="text-sm leading-relaxed" style={{ color: '#6B7280' }}>{desc}</p>
+            </div>
           ))}
+        </div>
+
+        <div className="mt-12 text-center">
+          <p style={{ color: '#6B7280', fontSize: 14 }}>Own a restaurant near UT Tampa?</p>
+          <button
+            className="mt-2 font-semibold bg-transparent border-none"
+            style={{ color: '#8B5CF6', cursor: 'pointer', textDecoration: 'none' }}
+            onMouseEnter={(e) => { e.currentTarget.style.textDecoration = 'underline' }}
+            onMouseLeave={(e) => { e.currentTarget.style.textDecoration = 'none' }}
+            onClick={() => { window.location.href = 'mailto:hello@campuscrave.com?subject=Restaurant Partnership' }}
+          >
+            Let&apos;s talk →
+          </button>
+          <p className="mt-3 text-xs" style={{ color: '#6B7280' }}>
+            Currently accepting applications from CRG and independent restaurants within 1.4mi of campus
+          </p>
         </div>
       </div>
     </section>

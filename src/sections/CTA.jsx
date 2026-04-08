@@ -1,48 +1,67 @@
-import FadeIn from '../components/FadeIn'
-
 export default function CTA() {
   return (
-    <section id="cta" className="bg-brand-dark py-24 md:py-32 px-6 md:px-8 text-center">
-      <div className="max-w-[720px] mx-auto">
-        <FadeIn>
-          <h2
-            className="font-display font-extrabold text-white tracking-[-0.03em] leading-[1.12] mb-5"
-            style={{ fontSize: 'clamp(28px, 4vw, 44px)' }}
+    <section id="cta" className="py-24" style={{ background: '#111827', position: 'relative', overflow: 'hidden' }}>
+      {/* Background decoration */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'radial-gradient(ellipse at center, rgba(107,33,168,0.15) 0%, transparent 70%)',
+        pointerEvents: 'none',
+      }} />
+
+      <div className="mx-auto px-6 text-center" style={{ maxWidth: 800, position: 'relative' }}>
+        <div className="section-label" style={{ justifyContent: 'center' }}>Get Started</div>
+
+        <h2 style={{
+          fontFamily: 'Outfit, sans-serif', fontWeight: 800,
+          fontSize: 'clamp(2rem, 4vw, 3rem)', lineHeight: 1.1, marginTop: '0.5rem',
+        }}>
+          <span style={{ color: 'white' }}>Ready to rethink</span>
+          <br />
+          <span className="gradient-text">campus dining?</span>
+        </h2>
+
+        <p style={{ color: '#9CA3AF', fontSize: '1.1rem', marginTop: '1.25rem', maxWidth: 500, margin: '1.25rem auto 0' }}>
+          Join students and partners building the future of campus food at the University of Tampa.
+        </p>
+
+        <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap', marginTop: '2.5rem' }}>
+          <button
+            style={{
+              background: '#6B21A8', color: 'white',
+              padding: '1rem 2rem', borderRadius: 12,
+              fontWeight: 600, fontSize: '1rem',
+              border: 'none', cursor: 'pointer', transition: 'background 200ms',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = '#5B1A9F' }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = '#6B21A8' }}
+            onClick={() => {
+              if (window.openExpoModal) { window.openExpoModal() }
+              else { window.location.href = 'mailto:hello@campuscrave.com?subject=Student Early Access' }
+            }}
           >
-            Ready to rethink campus dining?
-          </h2>
-          <p className="font-body text-[16px] text-white/60 leading-[1.65] max-w-[560px] mx-auto mb-12">
-            Whether you're a university administrator, a dining services operator, or a local
-            restaurant — we'd like to talk.
-          </p>
-          <div className="flex items-center justify-center gap-4 flex-wrap">
-            <a
-              href="mailto:hello@campuscrave.com"
-              className="inline-flex items-center gap-2.5 bg-white text-brand-dark px-7 py-3.5 rounded-[12px] font-body text-[15px] font-semibold hover:bg-gray-100 transition-colors shadow-[0_4px_16px_rgba(0,0,0,0.2)]"
-            >
-              Get Early Access
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 18 18"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M4 9h10" />
-                <path d="M10 5l4 4-4 4" />
-              </svg>
-            </a>
-            <a
-              href="mailto:hello@campuscrave.com"
-              className="inline-flex items-center gap-2 bg-transparent text-white/90 px-7 py-3.5 rounded-[12px] font-body text-[15px] font-semibold border border-white/20 hover:border-white/40 hover:bg-white/[0.05] transition-all"
-            >
-              Partnership Inquiries
-            </a>
-          </div>
-        </FadeIn>
+            Get Early Access
+          </button>
+
+          <button
+            style={{
+              background: 'transparent',
+              border: '1.5px solid rgba(107,33,168,0.5)',
+              color: '#8B5CF6',
+              padding: '1rem 2rem', borderRadius: 12,
+              fontWeight: 600, fontSize: '1rem',
+              cursor: 'pointer', transition: 'all 200ms',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(107,33,168,0.1)' }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
+            onClick={() => { window.location.href = 'mailto:hello@campuscrave.com?subject=Partnership Inquiry — CampusCrave' }}
+          >
+            Partner with Us
+          </button>
+        </div>
+
+        <p style={{ marginTop: '2rem', fontSize: 12, color: '#6B7280' }}>
+          University of Tampa pilot · Spring 2026 · hello@campuscrave.com
+        </p>
       </div>
     </section>
   )

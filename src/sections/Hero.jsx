@@ -1,101 +1,96 @@
-import FadeIn from '../components/FadeIn'
-
 export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex flex-col items-center justify-center text-center pt-[140px] pb-20 px-6 md:px-8 bg-white overflow-hidden"
+      style={{ minHeight: '100vh', background: '#ffffff', position: 'relative', overflow: 'hidden' }}
     >
-      {/* Subtle radial gradient — barely visible */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            'radial-gradient(ellipse 60% 50% at 80% -10%, #F5F3FF 0%, transparent 60%)',
-        }}
-      />
+      {/* Background radial — top center */}
+      <div style={{
+        position: 'absolute', width: 600, height: 600, top: -100,
+        left: '50%', transform: 'translateX(-50%)',
+        background: 'radial-gradient(circle, rgba(107,33,168,0.06) 0%, transparent 70%)',
+        pointerEvents: 'none',
+      }} />
+      {/* Background radial — bottom left */}
+      <div style={{
+        position: 'absolute', width: 400, height: 400, bottom: -80, left: -80,
+        background: 'radial-gradient(circle, rgba(107,33,168,0.04) 0%, transparent 70%)',
+        pointerEvents: 'none',
+      }} />
 
-      <div className="relative z-10 max-w-[800px]">
-        {/* Status pill */}
-        <FadeIn>
-          <div className="inline-flex items-center gap-2.5 bg-white border border-gray-200 rounded-full px-5 py-2 mb-10 shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
-            <span className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.5)]" />
-            <span className="text-sm font-body text-gray-600 font-medium">
-              Launching at University of Tampa
-            </span>
+      <div style={{
+        maxWidth: 1200, margin: '0 auto', padding: '8rem 1.5rem 5rem',
+        display: 'grid', gridTemplateColumns: '1fr', gap: '4rem', alignItems: 'center',
+      }}>
+        {/* ── TEXT CONTENT ── */}
+        <div style={{ maxWidth: '720px', margin: '0 auto', textAlign: 'center' }}>
+          {/* Status pill */}
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              background: 'rgba(107,33,168,0.08)', border: '1px solid rgba(107,33,168,0.2)',
+              borderRadius: 20, padding: '0.5rem 1rem', fontSize: 13,
+            }}>
+              <span style={{
+                width: 8, height: 8, borderRadius: '50%', background: '#4ADE80',
+                flexShrink: 0, animation: 'pulse-soft 2s ease-in-out infinite',
+              }} />
+              <span style={{ color: '#6B21A8' }}>🔴 Live Pilot · University of Tampa</span>
+            </div>
           </div>
-        </FadeIn>
 
-        {/* Headline */}
-        <FadeIn delay={0.06}>
-          <h1
-            className="font-display font-extrabold tracking-[-0.035em] leading-[1.02] text-gray-900 mb-6"
-            style={{ fontSize: 'clamp(40px, 6vw, 76px)' }}
-          >
-            Your meal plan,
-            <br />
-            <span className="text-brand-purple">off campus.</span>
+          {/* Headline */}
+          <h1 style={{
+            fontFamily: 'Outfit, sans-serif',
+            fontSize: 'clamp(2.5rem, 5vw, 4rem)',
+            fontWeight: 800, color: '#0C0118', lineHeight: 1.1, marginTop: '1.25rem',
+          }}>
+            Order from local restaurants with your meal plan.<br />
+            <span className="gradient-text">Zero hassle.</span>
           </h1>
-        </FadeIn>
 
-        {/* Subtitle */}
-        <FadeIn delay={0.1}>
-          <p className="font-body text-gray-500 leading-[1.65] max-w-[560px] mx-auto mb-14 text-[17px]">
-            Campus Crave connects university students with local restaurants through a
-            campus-endorsed platform. One app. One balance. Every craving.
+          {/* Subheadline */}
+          <p style={{
+            textAlign: 'center', maxWidth: '560px', margin: '1rem auto 0',
+            fontSize: '1.1rem', color: '#6B7280', lineHeight: 1.6,
+          }}>
+            Use your Dining Dollars off campus. CampusCrave connects students with local restaurants — no cash, no cards, just your meal plan balance.
           </p>
-        </FadeIn>
 
-        {/* Buttons */}
-        <FadeIn delay={0.16}>
-          <div className="flex items-center justify-center gap-4 flex-wrap">
-            <a
-              href="#cta"
-              className="inline-flex items-center gap-2.5 bg-brand-purple text-white px-7 py-3.5 rounded-[12px] font-body text-[15px] font-semibold shadow-[0_4px_16px_rgba(107,47,160,0.35)] hover:shadow-[0_8px_28px_rgba(107,47,160,0.5)] hover:-translate-y-0.5 transition-all"
+          {/* CTA buttons */}
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: '1.75rem', justifyContent: 'center' }}>
+            <button
+              onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
+              style={{
+                background: 'transparent', color: '#6B21A8', borderRadius: 12,
+                padding: '1rem 2rem', fontWeight: 600, fontSize: '1rem',
+                border: '1.5px solid rgba(107,33,168,0.3)', cursor: 'pointer',
+                transition: 'border-color 0.2s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(107,33,168,0.6)'}
+              onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(107,33,168,0.3)'}
             >
-              Request Early Access
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 18 18"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M4 9h10" />
-                <path d="M10 5l4 4-4 4" />
-              </svg>
-            </a>
-            <a
-              href="#universities"
-              className="inline-flex items-center gap-2 bg-white text-brand-purple px-7 py-3.5 rounded-[12px] font-body text-[15px] font-semibold border border-gray-200 hover:border-brand-purple-muted hover:bg-brand-purple-faint transition-all"
-            >
-              University Partners
-            </a>
+              See How It Works
+            </button>
           </div>
-        </FadeIn>
 
-        {/* Trust metrics */}
-        <FadeIn delay={0.22}>
-          <div className="flex items-center justify-center gap-12 md:gap-16 flex-wrap mt-20">
+          {/* Trust metrics */}
+          <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', marginTop: '2rem', justifyContent: 'center' }}>
             {[
-              { value: '6', label: 'CRG pilot restaurants' },
-              { value: '1.4mi', label: 'campus radius' },
-              { value: '$0', label: 'student delivery fees at launch' },
-            ].map((stat) => (
-              <div key={stat.label} className="text-center">
-                <div className="font-display font-extrabold text-[28px] text-gray-900 tracking-[-0.03em] leading-none mb-1.5">
-                  {stat.value}
-                </div>
-                <div className="font-body text-[13px] text-gray-400 font-medium">
-                  {stat.label}
-                </div>
+              '5 restaurant partners',
+              'University of Tampa pilot',
+              '$0 student fees at launch',
+            ].map(text => (
+              <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <circle cx="8" cy="8" r="8" fill="rgba(107,33,168,0.1)" />
+                  <path d="M5 8l2 2 4-4" stroke="#6B21A8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                <span style={{ fontSize: 14, color: '#6B7280' }}>{text}</span>
               </div>
             ))}
           </div>
-        </FadeIn>
+        </div>
       </div>
     </section>
   )
