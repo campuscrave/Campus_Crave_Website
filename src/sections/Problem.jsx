@@ -1,13 +1,13 @@
 const cards = [
   {
-    emoji: '💸',
-    iconBg: 'rgba(239,68,68,0.1)',
-    stat: '67%',
-    statColor: '#F87171',
-    borderColor: 'rgba(239,68,68,0.15)',
-    label: 'of students have unused Dining Dollars at semester end',
-    title: 'Wasted Meal Plans',
-    desc: 'Meal plan balances expire or reset. Money students paid for goes back to the university.',
+    emoji: '🏛️',
+    iconBg: 'rgba(16,185,129,0.1)',
+    stat: '$6.6B',
+    statColor: '#10B981',
+    borderColor: 'rgba(16,185,129,0.15)',
+    label: 'Total Addressable Market in U.S. campus dining & food spend',
+    title: 'Massive Untapped Market',
+    desc: 'Over 20 million college students across 4,000+ U.S. universities spend an average of $330/semester on meal plans — a largely locked, underserved market with no dominant mobile ordering platform.',
   },
   {
     emoji: '💳',
