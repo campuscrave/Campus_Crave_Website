@@ -41,11 +41,8 @@ export default function Partners() {
           ))}
         </div>
 
-        <p style={{ marginTop: '2.5rem', fontSize: 13, color: '#6B7280', textAlign: 'center' }}>
-          Starting at University of Tampa
-        </p>
-        <p style={{ marginTop: '0.5rem', fontSize: 12, color: '#9CA3AF', textAlign: 'center', fontStyle: 'italic' }}>
-          Pilot restaurant partners at University of Tampa. Operated by Ciccio Restaurant Group (CRG).
+        <p style={{ marginTop: '2.5rem', fontSize: 12, color: '#9CA3AF', textAlign: 'center', fontStyle: 'italic' }}>
+          Pilot launch at University of Tampa · Operated by Ciccio Restaurant Group (CRG)
         </p>
       </div>
     </section>

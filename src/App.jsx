@@ -12,6 +12,7 @@ import Founders from './sections/Founders'
 import Vision from './sections/Vision'
 import CTA from './sections/CTA'
 import PhoneShowcase from './sections/PhoneShowcase'
+import IDShowcase from './sections/IDShowcase'
 import CraveAI from './components/CraveAI'
 
 export default function App() {
@@ -44,6 +45,7 @@ export default function App() {
         <Problem />
         <HowItWorks />
         <PhoneShowcase />
+        <IDShowcase />
         <CraveDollars />
         <AppPreview />
         <Partners />

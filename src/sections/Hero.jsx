@@ -54,7 +54,7 @@ export default function Hero() {
             textAlign: 'center', maxWidth: '560px', margin: '1rem auto 0',
             fontSize: '1.1rem', color: '#6B7280', lineHeight: 1.6,
           }}>
-            Use your Dining Dollars off campus. CampusCrave connects students with local restaurants — no cash, no cards, just your meal plan balance.
+            Students double-spend — paying for a meal plan, then paying again at restaurants. CampusCrave fixes that. Use your campus balance anywhere. Zero double-spend.
           </p>
 
           {/* CTA buttons */}
@@ -77,8 +77,8 @@ export default function Hero() {
           {/* Trust metrics */}
           <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', marginTop: '2rem', justifyContent: 'center' }}>
             {[
-              '5 restaurant partners',
-              'University of Tampa pilot',
+              '5 CRG restaurant partners',
+              'Spring 2026 launch',
               '$0 student fees at launch',
             ].map(text => (
               <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
