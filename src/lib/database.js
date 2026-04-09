@@ -105,10 +105,10 @@ export async function createOrder({ leadId, leadEmail, itemName, restaurant }) {
 
     await supabase
       .from('expo_leads')
-      .update({ order_placed: true })
+      .update({ order_claimed: true })
       .eq('id', leadId)
 
-    return { success: true, orderNumber: `CC-${String(orderData.order_number).padStart(3, '0')}` }
+    return { success: true, orderNumber: orderData.order_number }
   }
 
   const stock = lsGet(LS_STOCK)
