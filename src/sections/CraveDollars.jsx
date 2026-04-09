@@ -39,7 +39,7 @@ export default function CraveDollars() {
               {benefits.map(({ title, desc }, i) => (
                 <div key={i} className="flex items-start gap-3">
                   <span className="mt-1 flex-shrink-0" style={{ color: '#8B5CF6', fontSize: 14, fontWeight: 700 }}>✦</span>
-                  <div>
+                  <div style={{ wordWrap: 'break-word', overflowWrap: 'break-word', maxWidth: '100%' }}>
                     <span style={{ fontSize: 14, color: '#F9FAFB', fontWeight: 600 }}>{title}</span>
                     <span style={{ fontSize: 13, color: '#9CA3AF' }}> — {desc}</span>
                   </div>
@@ -52,7 +52,7 @@ export default function CraveDollars() {
               <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: 22, fontWeight: 700, color: '#FFFFFF', marginBottom: 16 }}>
                 The market opportunity
               </p>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {[
                   { number: '$142B', label: 'Total U.S. college food market', sub: 'Annual off-campus food spend by 19.9M university students' },
                   { number: '$38B',  label: 'Meal plan addressable market',   sub: 'Students with active meal plans who still spend off-campus' },
@@ -60,6 +60,7 @@ export default function CraveDollars() {
                 ].map(({ number, label, sub }) => (
                   <div
                     key={number}
+                    className="w-full"
                     style={{
                       background: 'rgba(255,255,255,0.05)',
                       border: '1px solid rgba(147,51,234,0.3)',
@@ -67,7 +68,7 @@ export default function CraveDollars() {
                       padding: 24,
                     }}
                   >
-                    <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: 36, fontWeight: 700, color: '#FFFFFF' }}>{number}</div>
+                    <div className="text-3xl md:text-4xl font-bold text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>{number}</div>
                     <div style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 14, fontWeight: 600, color: 'rgba(255,255,255,0.8)', marginTop: 4 }}>{label}</div>
                     <div style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.5)', marginTop: 6 }}>{sub}</div>
                   </div>
