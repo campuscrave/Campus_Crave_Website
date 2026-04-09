@@ -7,7 +7,7 @@
 CREATE TABLE IF NOT EXISTS expo_leads (
   id            uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   created_at    timestamptz DEFAULT now() NOT NULL,
-  type          text NOT NULL CHECK (type IN ('student', 'visitor')),
+  type          text NOT NULL CHECK (type IN ('student', 'visitor', 'professor', 'investor')),
   first_name    text,
   full_name     text,
   email         text NOT NULL,
@@ -68,6 +68,7 @@ ALTER TABLE expo_admin_log    ENABLE ROW LEVEL SECURITY;
 -- expo_leads policies
 CREATE POLICY "anon_insert_leads"  ON expo_leads FOR INSERT  TO anon WITH CHECK (true);
 CREATE POLICY "anon_select_leads"  ON expo_leads FOR SELECT  TO anon USING (true);
+CREATE POLICY "anon_update_leads"  ON expo_leads FOR UPDATE  TO anon USING (true);
 CREATE POLICY "auth_update_leads"  ON expo_leads FOR UPDATE  TO authenticated USING (true);
 
 -- expo_orders policies
