@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import FadeIn from '../components/FadeIn';
 import SectionLabel from '../components/SectionLabel';
 
@@ -69,6 +69,38 @@ const mobilePhoneStyle = {
   flexShrink: 0,
 };
 
+function VideoPhone({ src, style: phoneStyleProp, notchStyle, indicatorStyle, videoStyle }) {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const vid = videoRef.current;
+    if (!vid) return;
+    vid.muted = true;
+    vid.play().catch(() => {});
+
+    const restart = () => { vid.currentTime = 0; vid.play().catch(() => {}); };
+    vid.addEventListener('ended', restart);
+    return () => vid.removeEventListener('ended', restart);
+  }, []);
+
+  return (
+    <div style={phoneStyleProp}>
+      <div style={notchStyle} />
+      <video
+        ref={videoRef}
+        src={src}
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="auto"
+        style={videoStyle}
+      />
+      <div style={indicatorStyle} />
+    </div>
+  );
+}
+
 export default function PhoneShowcase() {
   const [activeIndex, setActiveIndex] = useState(0);
   const carouselRef = useRef(null);
@@ -127,44 +159,13 @@ export default function PhoneShowcase() {
         <div className="hidden md:flex items-end justify-center gap-6 px-6">
           {phones.map((p) => (
             <div key={p.video} className="flex flex-col items-center">
-              <div style={phoneStyle(p.rotate, p.offset, p.delay, p.size)}>
-                {/* Notch */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '12px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: '80px',
-                    height: '20px',
-                    background: '#0C0118',
-                    borderRadius: '10px',
-                    zIndex: 10,
-                  }}
-                />
-                {/* Video */}
-                <video
-                  src={p.video}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-                {/* Home indicator */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    bottom: '8px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: '60px',
-                    height: '4px',
-                    background: 'rgba(255,255,255,0.3)',
-                    borderRadius: '2px',
-                  }}
-                />
-              </div>
+              <VideoPhone
+                src={p.video}
+                style={phoneStyle(p.rotate, p.offset, p.delay, p.size)}
+                notchStyle={{ position: 'absolute', top: '12px', left: '50%', transform: 'translateX(-50%)', width: '80px', height: '20px', background: '#0C0118', borderRadius: '10px', zIndex: 10 }}
+                videoStyle={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                indicatorStyle={{ position: 'absolute', bottom: '8px', left: '50%', transform: 'translateX(-50%)', width: '60px', height: '4px', background: 'rgba(255,255,255,0.3)', borderRadius: '2px' }}
+              />
               {/* Label */}
               <div className="mt-5 text-center" style={{ maxWidth: p.size === 'lg' ? '240px' : '220px' }}>
                 <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '14px', fontWeight: 600, color: 'white' }}>
@@ -209,44 +210,13 @@ export default function PhoneShowcase() {
                 padding: '0 24px',
               }}
             >
-              <div style={mobilePhoneStyle}>
-                {/* Notch */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '12px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: '80px',
-                    height: '20px',
-                    background: '#0C0118',
-                    borderRadius: '10px',
-                    zIndex: 10,
-                  }}
-                />
-                {/* Video */}
-                <video
-                  src={p.video}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-                {/* Home indicator */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    bottom: '8px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: '60px',
-                    height: '4px',
-                    background: 'rgba(255,255,255,0.3)',
-                    borderRadius: '2px',
-                  }}
-                />
-              </div>
+              <VideoPhone
+                src={p.video}
+                style={mobilePhoneStyle}
+                notchStyle={{ position: 'absolute', top: '12px', left: '50%', transform: 'translateX(-50%)', width: '80px', height: '20px', background: '#0C0118', borderRadius: '10px', zIndex: 10 }}
+                videoStyle={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                indicatorStyle={{ position: 'absolute', bottom: '8px', left: '50%', transform: 'translateX(-50%)', width: '60px', height: '4px', background: 'rgba(255,255,255,0.3)', borderRadius: '2px' }}
+              />
               {/* Label */}
               <div style={{ marginTop: '20px', textAlign: 'center', maxWidth: '260px' }}>
                 <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '15px', fontWeight: 600, color: 'white' }}>

@@ -8,7 +8,7 @@ export default function HowItWorks() {
             From craving to pickup in 3 taps.
           </h2>
           <p className="mt-4 text-base" style={{ color: '#6B7280' }}>
-            No new account. No extra fees. Just campus food, finally unified.
+            Starting at University of Tampa. Expanding to every campus in America.
           </p>
         </div>
 
@@ -110,9 +110,9 @@ export default function HowItWorks() {
                 <circle cx="12" cy="9" r="2.5" />
               </svg>
             </div>
-            <h3 className="mt-4 font-bold" style={{ fontSize: '1.25rem', color: '#0C0118' }}>Pick Up</h3>
+            <h3 className="mt-4 font-bold" style={{ fontSize: '1.25rem', color: '#0C0118' }}>Pick up. No fees. No friction.</h3>
             <p className="mt-2 text-sm leading-relaxed" style={{ color: '#6B7280' }}>
-              Pick up your order from the restaurant — zero wait, zero delivery fee, zero hassle.
+              Walk to the restaurant, show your order code, and go. Zero delivery fees, zero hassle.
             </p>
             <span
               className="mt-3 inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold"

@@ -1,17 +1,12 @@
 const benefits = [
-  'Zero breakage revenue risk — students spend, not forfeit',
-  'Seamless Dining Dollar integration via existing POS',
-  'University-endorsed and student-data compliant',
-  'Real-time spending analytics dashboard',
-  '60-day pilot program — no long-term commitment',
-  'Zero upfront cost to the university',
+  { title: 'Capture the off-campus market', desc: 'Students spend an average of $2,800/year on off-campus food despite having a meal plan. That\'s untapped revenue.' },
+  { title: 'Zero cannibalization', desc: 'CampusCrave doesn\'t replace dining hall visits. It captures spending that was already leaving campus.' },
+  { title: 'One centralized platform for every U.S. university', desc: 'From UT Tampa to Duke to Knox — one integration, every campus. The infrastructure scales nationally.' },
+  { title: 'White-label ready', desc: 'Launch as "Spartan Dollars" at UT Tampa. "Wildcat Wallet" at Knox. Your brand, our rails.' },
+  { title: 'Real-time balance sync', desc: 'Students see live dining dollar balances in the app. No surprises. No declined orders.' },
+  { title: 'PCI-compliant. Zero integration risk.', desc: 'Works alongside existing Sodexo, Transact, or CBORD systems. No rip-and-replace required.' },
 ]
 
-const CheckIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#4ADE80" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M3 8l3 3 7-6" />
-  </svg>
-)
 
 const stats = [
   { value: '60 days', label: 'to pilot launch', color: '#8B5CF6' },
@@ -33,22 +28,54 @@ export default function CraveDollars() {
           <div>
             <span className="section-label" style={{ color: '#8B5CF6' }}>For Universities</span>
             <h2 className="mt-3 font-bold text-white" style={{ fontSize: 'clamp(28px, 4vw, 44px)', lineHeight: 1.12 }}>
-              Your dining dollars,<br />
-              <span className="gradient-text">finally off-campus.</span>
+              The double-spend problem.<br />
+              <span className="gradient-text">Finally solved.</span>
             </h2>
             <p className="mt-4 text-base leading-relaxed" style={{ color: '#9CA3AF', maxWidth: 460 }}>
-              CampusCrave is designed to integrate with your existing meal plan infrastructure. No breakage revenue lost. No data risk. Just happier students.
+              Students pay for a meal plan. Then pay again at restaurants. CampusCrave routes that second spend through the campus dining system — adding revenue without displacing a single dining hall swipe.
             </p>
 
-            <div className="mt-8 flex flex-col gap-3">
-              {benefits.map((benefit, i) => (
+            <div className="mt-8 flex flex-col gap-4">
+              {benefits.map(({ title, desc }, i) => (
                 <div key={i} className="flex items-start gap-3">
-                  <span className="mt-0.5 flex-shrink-0">
-                    <CheckIcon />
-                  </span>
-                  <span style={{ fontSize: 14, color: '#D1D5DB' }}>{benefit}</span>
+                  <span className="mt-1 flex-shrink-0" style={{ color: '#8B5CF6', fontSize: 14, fontWeight: 700 }}>✦</span>
+                  <div>
+                    <span style={{ fontSize: 14, color: '#F9FAFB', fontWeight: 600 }}>{title}</span>
+                    <span style={{ fontSize: 13, color: '#9CA3AF' }}> — {desc}</span>
+                  </div>
                 </div>
               ))}
+            </div>
+
+            {/* Market opportunity */}
+            <div className="mt-12">
+              <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: 22, fontWeight: 700, color: '#FFFFFF', marginBottom: 16 }}>
+                The market opportunity
+              </p>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+                {[
+                  { number: '$142B', label: 'Total U.S. college food market', sub: 'Annual off-campus food spend by 19.9M university students' },
+                  { number: '$38B',  label: 'Meal plan addressable market',   sub: 'Students with active meal plans who still spend off-campus' },
+                  { number: '$2.1B', label: '5-year serviceable market',      sub: 'Top 200 U.S. universities with Sodexo/Aramark/Transact dining' },
+                ].map(({ number, label, sub }) => (
+                  <div
+                    key={number}
+                    style={{
+                      background: 'rgba(255,255,255,0.05)',
+                      border: '1px solid rgba(147,51,234,0.3)',
+                      borderRadius: 14,
+                      padding: 24,
+                    }}
+                  >
+                    <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: 36, fontWeight: 700, color: '#FFFFFF' }}>{number}</div>
+                    <div style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 14, fontWeight: 600, color: 'rgba(255,255,255,0.8)', marginTop: 4 }}>{label}</div>
+                    <div style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.5)', marginTop: 6 }}>{sub}</div>
+                  </div>
+                ))}
+              </div>
+              <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 11, textAlign: 'center', marginTop: 16 }}>
+                Market estimates based on NCES enrollment data, NRA college dining reports, and Technomic 2024 campus dining survey.
+              </p>
             </div>
 
             <a
