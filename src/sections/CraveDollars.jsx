@@ -16,8 +16,7 @@ const CheckIcon = () => (
 const stats = [
   { value: '60 days', label: 'to pilot launch', color: '#8B5CF6' },
   { value: '$0', label: 'upfront cost to university', color: '#4ADE80' },
-  // TODO: Verify count — Hero says "5 restaurant partners" but this stat says 6. Align before launch.
-  { value: '6', label: 'CRG restaurants at launch', color: '#8B5CF6' },
+  { value: '5', label: 'CRG restaurants at launch', color: '#8B5CF6' },
   { value: '1,400+', label: 'students in campus radius', color: '#FBB924' },
 ]
 
@@ -52,7 +51,10 @@ export default function CraveDollars() {
               ))}
             </div>
 
-            <button
+            <a
+              href="https://mail.google.com/mail/?view=cm&to=partners@campus-crave.com&su=University%20Partnership%20Inquiry%20-%20CampusCrave&body=Hi%20CampusCrave%20team%2C%20I'm%20interested%20in%20bringing%20CampusCrave%20to%20our%20university."
+              target="_blank"
+              rel="noopener noreferrer"
               className="mt-8 px-6 py-3 font-semibold transition-colors"
               style={{
                 borderRadius: 10,
@@ -60,13 +62,14 @@ export default function CraveDollars() {
                 color: '#8B5CF6',
                 background: 'transparent',
                 cursor: 'pointer',
+                display: 'inline-block',
+                textDecoration: 'none',
               }}
               onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(107,33,168,0.1)' }}
               onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
-              onClick={() => { window.location.href = 'mailto:hello@campuscrave.com?subject=University Partnership Inquiry' }}
             >
               Schedule a Partnership Call
-            </button>
+            </a>
           </div>
 
           {/* Right column — stat cards */}

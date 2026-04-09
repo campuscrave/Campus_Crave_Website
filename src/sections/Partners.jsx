@@ -13,7 +13,7 @@ export default function Partners() {
       <div className="mx-auto px-6 text-center" style={{ maxWidth: 1200 }}>
         <div className="section-label" style={{ justifyContent: 'center' }}>Pilot Partners</div>
         <h2 style={{ fontSize: 'clamp(1.75rem, 3vw, 2.5rem)', fontWeight: 700, color: '#0C0118' }}>
-          Launching with 6 CRG restaurants.
+          Launching with 5 CRG restaurants.
         </h2>
         <p style={{ color: '#6B7280', maxWidth: 600, margin: '0.75rem auto 0', fontSize: '1rem' }}>
           The Ciccio Restaurant Group runs Tampa's most beloved campus-area dining spots.

@@ -33,7 +33,7 @@ const cards = [
 
 export default function Problem() {
   return (
-    <section style={{ padding: '5rem 0', background: '#ffffff', position: 'relative' }}>
+    <section id="problem" style={{ padding: '5rem 0', background: '#ffffff', position: 'relative' }}>
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 1.5rem' }}>
 
         {/* Header */}

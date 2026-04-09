@@ -7,20 +7,22 @@ import OrderConfirmation from './OrderConfirmation';
 
 const FOOD_ITEMS = [
   {
-    id: 'chicken-tenders',
-    name: 'Chicken Tenders',
-    restaurant: 'Green Lemon',
-    originalPrice: '$9.99',
-    description: 'Crispy hand-breaded tenders with your choice of sauce',
-    emoji: '🍗',
+    id: 'pizza',
+    name: 'Stella Margherita Pizza',
+    description: 'Classic margherita pizza slice — fresh tomato sauce, melted mozzarella, basil. Catered by our restaurant partners.',
+    emoji: '🍕',
+    stock: 90,
+    tag: 'Catered',
+    restaurant: 'Catered',
   },
   {
-    id: 'classic-wrap',
-    name: 'The Classic Wrap',
-    restaurant: 'Green Lemon',
-    originalPrice: '$8.99',
-    description: 'Grilled chicken, lettuce, tomato, cheese in a warm flour tortilla',
+    id: 'wrap',
+    name: 'CRG Signature Wraps',
+    description: 'Choose your wrap:\n• Club Wrap — bacon, cheese, lettuce, tomato, chicken\n• Alamo Wrap — onions, peppers, mushrooms, chicken, cheese',
     emoji: '🌯',
+    stock: 90,
+    tag: 'Catered',
+    restaurant: 'Catered',
   },
 ];
 
@@ -28,6 +30,8 @@ const STEPS_WITH_PROGRESS = [
   'welcome',
   'student-form',
   'student-questions',
+  'professor-form',
+  'professor-questions',
   'visitor-form',
   'visitor-questions',
 ];
@@ -36,6 +40,8 @@ const STEP_NUM = {
   welcome: 1,
   'student-form': 2,
   'student-questions': 3,
+  'professor-form': 2,
+  'professor-questions': 3,
   'visitor-form': 2,
   'visitor-questions': 3,
 };
@@ -182,11 +188,11 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
       try {
         const levels = window.__db && window.__db.getStockLevels
           ? await window.__db.getStockLevels()
-          : FOOD_ITEMS.map((item) => ({ item_name: item.name, remaining_stock: 40, is_active: true }));
+          : FOOD_ITEMS.map((item) => ({ item_name: item.name, remaining_stock: 90, is_active: true }));
         setStockLevels(levels);
       } catch (_e) {
         setStockLevels(
-          FOOD_ITEMS.map((item) => ({ item_name: item.name, remaining_stock: 40, is_active: true })),
+          FOOD_ITEMS.map((item) => ({ item_name: item.name, remaining_stock: 90, is_active: true })),
         );
       } finally {
         setLoadingStock(false);
@@ -226,7 +232,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
   const currentStepNum = STEP_NUM[currentStep] || 1;
   const showClose = currentStep !== 'confirmation' && currentStep !== 'reward';
 
-  // ── Student form handler (lifted from inner StepStudentForm) ──
+  // ── Student form handler ──
   const handleStudentNext = () => {
     const errs = {};
     if (!formData.firstName.trim()) errs.firstName = 'First name is required';
@@ -238,7 +244,18 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
     setCurrentStep('student-questions');
   };
 
-  // ── Visitor form handler (lifted from inner StepVisitorForm) ──
+  // ── Professor form handler ──
+  const handleProfessorNext = () => {
+    const errs = {};
+    if (!formData.fullName.trim()) errs.fullName = 'Full name is required';
+    if (!formData.email.trim()) errs.email = 'Email is required';
+    else if (!isValidEmail(formData.email)) errs.email = 'Enter a valid email';
+    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+    setErrors({});
+    setCurrentStep('professor-questions');
+  };
+
+  // ── Visitor / Investor form handler ──
   const handleVisitorNext = () => {
     const errs = {};
     if (!formData.fullName.trim()) errs.fullName = 'Full name is required';
@@ -249,7 +266,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
     setCurrentStep('visitor-questions');
   };
 
-  // ── Student survey submit (lifted from inner StepStudentQuestions) ──
+  // ── Student survey submit ──
   const handleStudentSave = async () => {
     if (window.__db && window.__db.createLead) {
       try {
@@ -257,36 +274,57 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
           type: 'student',
           firstName: formData.firstName,
           email: formData.email,
-          q1Answer: formData.q1Answer,
-          q2Answer: formData.q2Answer,
-          q3Answer: formData.q3Answer,
+          q1: formData.q1Answer,
+          q2: formData.q2Answer,
+          q3: formData.q3Answer,
         });
-        if (result && result.id) setLeadId(result.id);
+        if (result && result.error === 'duplicate') { setCurrentStep('already-ordered'); return; }
+        if (result && result.leadId) setLeadId(result.leadId);
       } catch (_e) { /* proceed regardless */ }
     }
     setCurrentStep('ordering');
   };
 
-  // ── Visitor survey submit (lifted from inner StepVisitorQuestions) ──
+  // ── Professor survey submit ──
+  const handleProfessorSave = async () => {
+    if (window.__db && window.__db.createLead) {
+      try {
+        const result = await window.__db.createLead({
+          type: 'professor',
+          fullName: formData.fullName,
+          email: formData.email,
+          q1: formData.q1Answer,
+          q2: formData.q2Answer,
+          q3: formData.q3Answer,
+        });
+        if (result && result.error === 'duplicate') { setCurrentStep('already-ordered'); return; }
+        if (result && result.leadId) setLeadId(result.leadId);
+      } catch (_e) { /* proceed regardless */ }
+    }
+    setCurrentStep('ordering');
+  };
+
+  // ── Investor survey submit ──
   const handleVisitorSave = async () => {
     if (window.__db && window.__db.createLead) {
       try {
         const result = await window.__db.createLead({
-          type: 'visitor',
+          type: 'investor',
           fullName: formData.fullName,
           email: formData.email,
           role: formData.role,
-          q1Answer: formData.q1Answer,
-          q2Answer: formData.q2Answer,
-          q3Answer: formData.q3Answer,
+          q1: formData.q1Answer,
+          q2: formData.q2Answer,
+          q3: formData.q3Answer,
         });
-        if (result && result.id) setLeadId(result.id);
+        if (result && result.error === 'duplicate') { setCurrentStep('already-ordered'); return; }
+        if (result && result.leadId) setLeadId(result.leadId);
       } catch (_e) { /* proceed regardless */ }
     }
     setCurrentStep('ordering');
   };
 
-  // ── Swipe success handler (lifted from inner StepSwipe) ──
+  // ── Swipe success handler ──
   const handleSwipeSuccess = async () => {
     setSwipeLoading(true);
     setSwipeErrMsg('');
@@ -308,9 +346,9 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
           setSwipeErrMsg('Something went wrong. Tap to try again.');
         }
       } else {
-        // Demo: generate a fake order number
-        const fake = (Date.now() % 9000) + 1001;
-        setOrderNumber(fake);
+        // Demo: generate a CC-format order number
+        const fakeNum = String((Date.now() % 180) + 1).padStart(3, '0');
+        setOrderNumber(`CC-${fakeNum}`);
         setCurrentStep('confirmation');
       }
     } catch (_e) {
@@ -327,42 +365,79 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
   const studentQuestions = [
     {
       key: 'q1Answer',
-      question: 'How often do you order food on or near campus?',
-      options: ['Every day', 'A few times a week', 'Once a week', 'Rarely'],
+      question: 'What year are you in?',
+      options: ['Freshman', 'Sophomore', 'Junior', 'Senior'],
     },
     {
       key: 'q2Answer',
-      question: "What's your biggest frustration with campus food?",
-      options: ['Long lines', 'Limited options', 'High prices', 'Inconvenient hours'],
+      question: "What's your biggest frustration with campus dining?",
+      options: ['Limited hours', 'Poor variety', 'Wasted meal plan', 'Too expensive', 'Other'],
     },
     {
       key: 'q3Answer',
-      question: 'Would you pay with Dining Dollars if CampusCrave accepted them?',
-      options: ['Definitely yes', 'Probably yes', 'Not sure', 'No'],
+      question: 'If CampusCrave became a paid add-on to your meal plan — letting you use Spartan Dollars at off-campus restaurants — would you take part?',
+      options: ['Definitely yes 🙌', 'Probably yes', 'Not sure', 'No thanks'],
     },
   ];
 
-  const visitorQuestions = [
+  const professorQuestions = [
     {
       key: 'q1Answer',
-      question: 'What excites you most about CampusCrave?',
-      options: ['Campus food delivery', 'Student fintech / Dining Dollars', 'University-wide marketplace', 'The team'],
+      question: "What's your department or area?",
+      options: ['STEM', 'Business', 'Arts & Humanities', 'Social Sciences', 'Other'],
     },
     {
       key: 'q2Answer',
-      question: 'How would you describe your interest?',
-      options: ['Potential investor', 'University partner', 'Restaurant partner', 'Just curious'],
+      question: 'How often do you hold team lunches or staff meetings near campus?',
+      options: ['Rarely', '1–2× a month', 'Weekly', 'Very often'],
     },
     {
       key: 'q3Answer',
-      question: 'What campus challenge resonates most?',
-      options: ['Food access & convenience', 'Student spending behavior', 'Dining hall tech gaps', 'Local restaurant discovery'],
+      question: 'Would dining credits for off-campus restaurant meetings improve your work experience at UT?',
+      options: ['Definitely yes 🙌', 'Probably yes', 'Not sure', 'No thanks'],
+    },
+  ];
+
+  const isParentInvestor = formData.q1Answer === 'Parent of a student';
+  const visitorQuestions = [
+    {
+      key: 'q1Answer',
+      question: "What's your connection to campus life?",
+      options: ['Parent of a student', 'Faculty or Admin', 'Entrepreneur', 'VC or Investor', 'Just curious 👀'],
+      onChange: (val) => {
+        const wasParent = formData.q1Answer === 'Parent of a student';
+        const willBeParent = val === 'Parent of a student';
+        if (wasParent !== willBeParent) updateForm('q2Answer', '');
+        updateForm('q1Answer', val);
+      },
+    },
+    {
+      key: 'q2Answer',
+      question: isParentInvestor
+        ? 'How aware are you of how much your student spends on off-campus dining?'
+        : 'What sector do you primarily operate or invest in?',
+      options: isParentInvestor
+        ? ['Very aware', 'Somewhat aware', 'Honestly, no idea']
+        : ['EdTech', 'FoodTech', 'Consumer apps', 'Other'],
+    },
+    {
+      key: 'q3Answer',
+      question: `Would a prepaid off-campus dining plan — trackable by parents, usable by students — be something you'd support or fund?`,
+      options: ['Very interested 🔥', 'Somewhat interested', 'Not for me'],
     },
   ];
 
   const allStudentAnswered = !!(formData.q1Answer && formData.q2Answer && formData.q3Answer);
+  const allProfessorAnswered = !!(formData.q1Answer && formData.q2Answer && formData.q3Answer);
   const allVisitorAnswered = !!(formData.q1Answer && formData.q2Answer && formData.q3Answer);
-  const backStep = userType === 'student' ? 'student-questions' : 'visitor-questions';
+
+  const backStep =
+    userType === 'student'
+      ? 'student-questions'
+      : userType === 'professor'
+      ? 'professor-questions'
+      : 'visitor-questions';
+
   const firstName =
     formData.firstName ||
     (formData.fullName ? formData.fullName.split(' ')[0] : '') ||
@@ -377,7 +452,6 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
         }
       `}</style>
 
-      {/* BUG 2 FIX: Only close on direct overlay click; block scroll-triggered closes */}
       <div
         onClick={(e) => {
           if (e.target === e.currentTarget) {
@@ -415,8 +489,6 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
             flexDirection: 'column',
           }}
         >
-          {/* BUG 1 FIX: debug text removed */}
-
           {showClose && (
             <button
               onClick={onClose}
@@ -463,18 +535,34 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
                 <div style={{width:48,height:48,borderRadius:'50%',background:'#22C55E',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 0.75rem',fontSize:'1.5rem'}}>✓</div>
                 <div style={{fontSize:'1.5rem',fontWeight:800,color:'white',letterSpacing:'-0.02em',fontFamily:'Outfit,sans-serif'}}>Your Reward Awaits ✦</div>
                 <div style={{background:'linear-gradient(135deg,rgba(255,255,255,0.18),rgba(255,255,255,0.08))',border:'1px solid rgba(255,255,255,0.25)',borderRadius:16,padding:'1.25rem',marginTop:'1rem',backdropFilter:'blur(8px)'}}>
+                  {/* Venture Expo badge — first visible element on the reward card */}
+                  <div style={{display:'flex',justifyContent:'center',marginBottom:'0.875rem'}}>
+                    <div style={{
+                      background:'rgba(147,51,234,0.15)',
+                      border:'1px solid rgba(147,51,234,0.5)',
+                      borderRadius:'20px',
+                      padding:'6px 16px',
+                      display:'inline-flex',
+                      alignItems:'center',
+                      gap:'6px',
+                    }}>
+                      <span style={{fontSize:'10px',color:'#C084FC',fontWeight:700,letterSpacing:'0.1em'}}>
+                        🏛️ NEW VENTURE EXPO · UNIVERSITY OF TAMPA
+                      </span>
+                    </div>
+                  </div>
                   <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
                     <div>
                       <div style={{fontSize:11,color:'rgba(255,255,255,0.7)',fontWeight:500,textTransform:'uppercase',letterSpacing:'0.08em'}}>Total Value</div>
                       <div style={{fontSize:'2.25rem',fontWeight:800,color:'white',lineHeight:1.1,marginTop:4}}>FREE</div>
                       <div style={{fontSize:13,color:'rgba(255,255,255,0.8)',marginTop:4}}>One complimentary order</div>
+                      <p style={{fontSize:'11px',color:'rgba(255,255,255,0.5)',marginTop:'4px'}}>First orders at the University of Tampa</p>
                     </div>
-                    <img src="/logo.jpeg" alt="CampusCrave" style={{ height: '28px', objectFit: 'contain' }} />
+                    <img src="/logo.jpeg" alt="CampusCrave" style={{ height: '24px', objectFit: 'contain' }} />
                   </div>
                   <div style={{borderTop:'1px dashed rgba(255,255,255,0.25)',margin:'1rem 0 0.75rem'}} />
                   <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-                    <div style={{fontSize:12,color:'rgba(255,255,255,0.85)',fontWeight:700}}>🏛️ University of Tampa · Venture Expo 2026</div>
-                    <div style={{fontSize:11,color:'rgba(255,255,255,0.6)'}}>1 per student</div>
+                    <div style={{fontSize:12,color:'rgba(255,255,255,0.85)',fontWeight:700}}>1 per student</div>
                   </div>
                 </div>
               </div>
@@ -482,7 +570,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
                 <div style={{fontSize:'1rem',fontWeight:700,color:'#0C0118',textAlign:'center'}}>Claim your free order now</div>
                 <div style={{fontSize:13,color:'#6B7280',textAlign:'center',marginTop:4}}>Answer 3 quick questions. Swipe to claim. Pick up at our booth.</div>
                 <div style={{display:'flex',justifyContent:'center',gap:8,marginTop:'0.875rem'}}>
-                  {['📝 3 questions','👆 Swipe','🍗 Pick up'].map((pill,i)=>(
+                  {['📝 3 questions','👆 Swipe','🍕 Pick up'].map((pill,i)=>(
                     <div key={i} style={{fontSize:11,color:'#6B21A8',background:'rgba(107,33,168,0.08)',borderRadius:20,padding:'3px 10px',fontWeight:500}}>{pill}</div>
                   ))}
                 </div>
@@ -544,12 +632,32 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
                       onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#6B21A8'; e.currentTarget.style.background = 'rgba(107,33,168,0.1)'; }}
                       onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(107,33,168,0.3)'; e.currentTarget.style.background = 'rgba(107,33,168,0.06)'; }}
                     >
-                      <div style={{ fontWeight: 600, fontSize: '1rem', marginBottom: '4px' }}>🎓 I'm a Student</div>
+                      <div style={{ fontWeight: 600, fontSize: '1rem', marginBottom: '4px' }}>🎓 Student</div>
                       <div style={{ fontSize: '13px', color: '#6B7280' }}>UT Tampa or local university</div>
                     </button>
 
                     <button
-                      onClick={() => { setErrors({}); setUserType('visitor'); setCurrentStep('visitor-form'); }}
+                      onClick={() => { setErrors({}); setUserType('professor'); setCurrentStep('professor-form'); }}
+                      style={{
+                        padding: '1.25rem',
+                        borderRadius: '14px',
+                        border: '2px solid rgba(107,33,168,0.3)',
+                        background: 'rgba(107,33,168,0.06)',
+                        color: '#0C0118',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        fontFamily: "'Plus Jakarta Sans', sans-serif",
+                        transition: 'border-color 150ms, background 150ms',
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#6B21A8'; e.currentTarget.style.background = 'rgba(107,33,168,0.1)'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(107,33,168,0.3)'; e.currentTarget.style.background = 'rgba(107,33,168,0.06)'; }}
+                    >
+                      <div style={{ fontWeight: 600, fontSize: '1rem', marginBottom: '4px' }}>👨‍🏫 Professor</div>
+                      <div style={{ fontSize: '13px', color: '#6B7280' }}>Faculty at UT or neighboring institution</div>
+                    </button>
+
+                    <button
+                      onClick={() => { setErrors({}); setUserType('investor'); setCurrentStep('visitor-form'); }}
                       style={{
                         padding: '1.25rem',
                         borderRadius: '14px',
@@ -564,7 +672,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
                       onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#D1D5DB'; e.currentTarget.style.background = '#F3F4F6'; }}
                       onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E5E7EB'; e.currentTarget.style.background = '#F9FAFB'; }}
                     >
-                      <div style={{ fontWeight: 600, fontSize: '1rem', marginBottom: '4px' }}>🤝 I'm a Visitor / Investor</div>
+                      <div style={{ fontWeight: 600, fontSize: '1rem', marginBottom: '4px' }}>👀 Possible Investor?</div>
                       <div style={{ fontSize: '13px', color: '#6B7280' }}>Judge, mentor, or expo attendee</div>
                     </button>
                   </div>
@@ -623,7 +731,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
               {currentStep === 'student-questions' && (
                 <div>
                   <button style={s.backBtn} onClick={() => setCurrentStep('student-form')}>← Back</button>
-                  <div style={{ fontSize: '1rem', fontWeight: 700, color: 'white', marginBottom: '4px' }}>Quick survey 📋</div>
+                  <div style={{ fontSize: '1rem', fontWeight: 700, color: '#0C0118', marginBottom: '4px' }}>Quick survey 📋</div>
                   <div style={{ fontSize: '12px', color: '#9CA3AF', marginBottom: '0.75rem' }}>3 questions, then your free food!</div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -658,17 +766,106 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
                       onMouseEnter={(e) => { if (allStudentAnswered) e.currentTarget.style.background = '#5B1A9F'; }}
                       onMouseLeave={(e) => (e.currentTarget.style.background = '#6B21A8')}
                     >
-                      Claim My Free Order 🎉
+                      Claim My Free Order →
                     </button>
                   </div>
                 </div>
               )}
 
-              {/* ── STEP: visitor-form ── */}
+              {/* ── STEP: professor-form ── */}
+              {currentStep === 'professor-form' && (
+                <div>
+                  <button style={s.backBtn} onClick={() => { setErrors({}); setCurrentStep('welcome'); }}>← Back</button>
+                  <div style={s.title}>Great to meet you 👨‍🏫</div>
+                  <div style={s.subtitle}>Quick details so we can confirm your order</div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div>
+                      <label style={s.label}>Full Name</label>
+                      <input
+                        style={{ ...s.input, ...(errors.fullName ? s.inputError : {}) }}
+                        placeholder="Your full name"
+                        value={formData.fullName}
+                        onChange={(e) => updateForm('fullName', e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleProfessorNext()}
+                      />
+                      {errors.fullName && <div style={s.errorMsg}>{errors.fullName}</div>}
+                    </div>
+                    <div>
+                      <label style={s.label}>Email</label>
+                      <input
+                        style={{ ...s.input, ...(errors.email ? s.inputError : {}) }}
+                        placeholder="you@ut.edu"
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => updateForm('email', e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleProfessorNext()}
+                      />
+                      {errors.email && <div style={s.errorMsg}>{errors.email}</div>}
+                    </div>
+                  </div>
+
+                  <button
+                    style={{ ...s.primaryBtn, marginTop: '1.5rem' }}
+                    onClick={handleProfessorNext}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = '#5B1A9F')}
+                    onMouseLeave={(e) => (e.currentTarget.style.background = '#6B21A8')}
+                  >
+                    Continue →
+                  </button>
+                </div>
+              )}
+
+              {/* ── STEP: professor-questions ── */}
+              {currentStep === 'professor-questions' && (
+                <div>
+                  <button style={s.backBtn} onClick={() => setCurrentStep('professor-form')}>← Back</button>
+                  <div style={{ fontSize: '1rem', fontWeight: 700, color: '#0C0118', marginBottom: '4px' }}>Quick survey 📋</div>
+                  <div style={{ fontSize: '12px', color: '#9CA3AF', marginBottom: '0.75rem' }}>3 questions, then your free food!</div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {professorQuestions.map(({ key, question, options }) => (
+                      <div key={key}>
+                        <div style={{ fontSize: '13px', color: '#0C0118', fontWeight: 600, marginBottom: '8px' }}>
+                          {question}
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+                          {options.map((opt) => (
+                            <button
+                              key={opt}
+                              onClick={() => updateForm(key, opt)}
+                              style={{ ...s.optionBtn(formData[key] === opt), padding: '6px 10px', fontSize: '12px', textAlign: 'center' }}
+                            >
+                              {opt}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div style={{ position: 'sticky', bottom: 0, background: '#ffffff', padding: '0.75rem 0 0', marginTop: '0.75rem', borderTop: '1px solid #F3F4F6' }}>
+                    <button
+                      style={{
+                        ...s.primaryBtn,
+                        opacity: allProfessorAnswered ? 1 : 0.45,
+                        cursor: allProfessorAnswered ? 'pointer' : 'not-allowed',
+                      }}
+                      onClick={allProfessorAnswered ? handleProfessorSave : undefined}
+                      onMouseEnter={(e) => { if (allProfessorAnswered) e.currentTarget.style.background = '#5B1A9F'; }}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = '#6B21A8')}
+                    >
+                      Claim My Free Order →
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* ── STEP: visitor-form (Possible Investor?) ── */}
               {currentStep === 'visitor-form' && (
                 <div>
                   <button style={s.backBtn} onClick={() => { setErrors({}); setCurrentStep('welcome'); }}>← Back</button>
-                  <div style={s.title}>Great to meet you 🤝</div>
+                  <div style={s.title}>Great to meet you 👀</div>
                   <div style={s.subtitle}>Tell us a bit about yourself</div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -695,19 +892,6 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
                       />
                       {errors.email && <div style={s.errorMsg}>{errors.email}</div>}
                     </div>
-                    <div>
-                      <label style={s.label}>
-                        Your Role{' '}
-                        <span style={{ color: '#4B5563', fontWeight: 400 }}>(optional)</span>
-                      </label>
-                      <input
-                        style={s.input}
-                        placeholder="e.g. Investor, Judge, Administrator..."
-                        value={formData.role}
-                        onChange={(e) => updateForm('role', e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleVisitorNext()}
-                      />
-                    </div>
                   </div>
 
                   <button
@@ -721,15 +905,15 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
                 </div>
               )}
 
-              {/* ── STEP: visitor-questions ── */}
+              {/* ── STEP: visitor-questions (Possible Investor?) ── */}
               {currentStep === 'visitor-questions' && (
                 <div>
                   <button style={s.backBtn} onClick={() => setCurrentStep('visitor-form')}>← Back</button>
-                  <div style={{ fontSize: '1rem', fontWeight: 700, color: 'white', marginBottom: '4px' }}>3 quick questions 📋</div>
-                  <div style={{ fontSize: '12px', color: '#9CA3AF', marginBottom: '0.75rem' }}>Then claim your free order from Green Lemon</div>
+                  <div style={{ fontSize: '1rem', fontWeight: 700, color: '#0C0118', marginBottom: '4px' }}>3 quick questions 📋</div>
+                  <div style={{ fontSize: '12px', color: '#9CA3AF', marginBottom: '0.75rem' }}>Then claim your free order</div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    {visitorQuestions.map(({ key, question, options }) => (
+                    {visitorQuestions.map(({ key, question, options, onChange }) => (
                       <div key={key}>
                         <div style={{ fontSize: '13px', color: '#0C0118', fontWeight: 600, marginBottom: '8px' }}>
                           {question}
@@ -738,7 +922,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
                           {options.map((opt) => (
                             <button
                               key={opt}
-                              onClick={() => updateForm(key, opt)}
+                              onClick={() => onChange ? onChange(opt) : updateForm(key, opt)}
                               style={{ ...s.optionBtn(formData[key] === opt), padding: '6px 10px', fontSize: '12px', textAlign: 'center' }}
                             >
                               {opt}
@@ -760,7 +944,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
                       onMouseEnter={(e) => { if (allVisitorAnswered) e.currentTarget.style.background = '#5B1A9F'; }}
                       onMouseLeave={(e) => (e.currentTarget.style.background = '#6B21A8')}
                     >
-                      Claim My Free Order 🎉
+                      Claim My Free Order →
                     </button>
                   </div>
                 </div>
@@ -931,6 +1115,40 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
                 </div>
               )}
 
+            </div>
+          )}
+
+          {/* ── STEP: already-ordered ── */}
+          {currentStep === 'already-ordered' && (
+            <div style={{ textAlign: 'center', padding: '40px 24px' }}>
+              <div style={{ fontSize: '48px', marginBottom: '16px' }}>👀</div>
+              <h2 style={{
+                fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: '22px',
+                color: '#0C0118', marginBottom: '8px',
+              }}>
+                You already have an order!
+              </h2>
+              <p style={{
+                color: '#6B7280', fontSize: '14px',
+                fontFamily: "'Plus Jakarta Sans', sans-serif", marginBottom: '24px',
+                lineHeight: 1.5,
+              }}>
+                One order per person — show your confirmation screen
+                at the booth to pick up your food.
+              </p>
+              <button
+                onClick={onClose}
+                style={{
+                  background: '#6B21A8', color: 'white', border: 'none',
+                  borderRadius: '12px', padding: '12px 32px',
+                  fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 600,
+                  fontSize: '15px', cursor: 'pointer',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = '#5B1A9F')}
+                onMouseLeave={(e) => (e.currentTarget.style.background = '#6B21A8')}
+              >
+                Got it ✓
+              </button>
             </div>
           )}
 

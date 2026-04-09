@@ -5,7 +5,7 @@ const phases = [
     statusColor: '#4ADE80',
     statusBg: 'rgba(74,222,128,0.15)',
     title: 'UT Tampa Pilot',
-    items: ['Pickup ordering', '6 CRG restaurants', 'Dining Dollar integration', 'Venture Expo demo'],
+    items: ['Pickup ordering', '5 CRG restaurants', 'Dining Dollar integration', 'Venture Expo demo'],
     timeline: 'Spring 2026',
     active: true,
   },

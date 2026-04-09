@@ -29,15 +29,15 @@ const KB = [
   },
   {
     keywords: ['invest', 'investor', 'funding', 'raise', 'capital', 'equity', 'pitch', 'deck'],
-    response: "We're building the infrastructure layer for campus commerce — starting with food, expanding to everything students buy on and around campus. If you're interested in learning more about our raise, reach out to our team at hello@campuscrave.com or visit our investor section below. 📈",
+    response: "We're building the infrastructure layer for campus commerce — starting with food, expanding to everything students buy on and around campus. If you're interested in learning more about our raise, reach out to our team at hello@campus-crave.com or visit our investor section below. 📈",
   },
   {
     keywords: ['partner with', 'join', 'restaurant owner', 'bring my', 'my restaurant', 'onboard'],
-    response: "We'd love to have you on the platform! CampusCrave gives restaurants direct access to the student meal plan market — thousands of students with pre-loaded balances looking for places to spend them. Email us at hello@campuscrave.com and we'll walk you through the partnership terms. 🤝",
+    response: "We'd love to have you on the platform! CampusCrave gives restaurants direct access to the student meal plan market — thousands of students with pre-loaded balances looking for places to spend them. Email us at hello@campus-crave.com and we'll walk you through the partnership terms. 🤝",
   },
   {
     keywords: ['university', 'college', 'institution', 'school', 'bring campuscrave', 'expand'],
-    response: "We're actively looking for our next university partner after the Tampa pilot. If you're a university administrator, dining director, or student government leader — let's talk. We integrate with existing dining systems with zero disruption. Email hello@campuscrave.com 🏫",
+    response: "We're actively looking for our next university partner after the Tampa pilot. If you're a university administrator, dining director, or student government leader — let's talk. We integrate with existing dining systems with zero disruption. Email hello@campus-crave.com 🏫",
   },
   {
     keywords: ['fee', 'cost', 'price', 'free', 'charge', 'pay', 'how much'],
@@ -45,11 +45,11 @@ const KB = [
   },
   {
     keywords: ['app', 'download', 'ios', 'android', 'mobile', 'iphone', 'play store', 'app store'],
-    response: "The CampusCrave app is currently in pilot testing at University of Tampa. Public launch on the App Store is planned for later in 2026. Want early access? Drop your email at our booth or reach out at hello@campuscrave.com 📱",
+    response: "The CampusCrave app is currently in pilot testing at University of Tampa. Public launch on the App Store is planned for later in 2026. Want early access? Drop your email at our booth or reach out at hello@campus-crave.com 📱",
   },
 ];
 
-const DEFAULT_RESPONSE = "Great question! I'm still learning the full CampusCrave knowledge base 😄 For anything I can't answer, reach out directly at hello@campuscrave.com — or ask a team member at the booth if you're at the Venture Expo!";
+const DEFAULT_RESPONSE = "Great question! I'm still learning the full CampusCrave knowledge base 😄 For anything I can't answer, reach out directly at hello@campus-crave.com — or ask a team member at the booth if you're at the Venture Expo!";
 
 const OPENING_MESSAGE = "Hey! I'm CraveAI 👋 I'm here to answer anything about CampusCrave — how it works, our restaurant partners, the Dining Dollars integration, investment opportunities, or how to bring us to your university. What do you want to know?";
 

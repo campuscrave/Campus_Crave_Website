@@ -55,7 +55,9 @@ export default function Navbar() {
               </a>
             ))}
             <a
-              href="#cta"
+              href="https://mail.google.com/mail/?view=cm&to=hello@campus-crave.com&su=Early%20Access%20Request%20-%20CampusCrave&body=Hi%20CampusCrave%20team%2C%20I'd%20like%20early%20access%20to%20the%20platform."
+              target="_blank"
+              rel="noopener noreferrer"
               className="ml-3 bg-brand-purple text-white px-5 py-2.5 rounded-[10px] font-body text-sm font-semibold shadow-[0_2px_12px_rgba(107,47,160,0.3)] hover:shadow-[0_4px_20px_rgba(107,47,160,0.45)] hover:-translate-y-px transition-all"
             >
               Get Early Access
@@ -96,7 +98,9 @@ export default function Navbar() {
               </a>
             ))}
             <a
-              href="#cta"
+              href="https://mail.google.com/mail/?view=cm&to=hello@campus-crave.com&su=Early%20Access%20Request%20-%20CampusCrave&body=Hi%20CampusCrave%20team%2C%20I'd%20like%20early%20access%20to%20the%20platform."
+              target="_blank"
+              rel="noopener noreferrer"
               onClick={closeMenu}
               className="mt-4 bg-brand-purple text-white text-center py-3 rounded-xl font-body text-sm font-semibold"
             >

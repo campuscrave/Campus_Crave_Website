@@ -21,33 +21,69 @@ export async function checkEmailExists(email) {
   return lsGet(LS_EMAILS).includes(email.toLowerCase())
 }
 
+function buildLeadPayload(baseData, q1, q2, q3) {
+  const { type } = baseData
+
+  if (type === 'student') {
+    return {
+      ...baseData,
+      year_in_school: q1,
+      campus_dining_frustration: q2,
+      willingness_to_pay: q3,
+    }
+  }
+
+  if (type === 'professor') {
+    return {
+      ...baseData,
+      department: q1,
+      meeting_frequency: q2,
+      dining_credits_interest: q3,
+    }
+  }
+
+  if (type === 'investor') {
+    return {
+      ...baseData,
+      connection_to_campus: q1,
+      spending_awareness: q2,
+      prepaid_plan_interest: q3,
+    }
+  }
+
+  return baseData
+}
+
 export async function createLead({ type, firstName, fullName, email, role, q1, q2, q3 }) {
   if (!email) return { success: false, error: 'missing_email' }
   const exists = await checkEmailExists(email)
   if (exists) return { success: false, error: 'duplicate' }
 
+  const baseData = {
+    type,
+    first_name: firstName,
+    full_name: fullName,
+    email,
+    role,
+  }
+  const payload = buildLeadPayload(baseData, q1, q2, q3)
+
   if (supabase) {
     const { data, error } = await supabase
       .from('expo_leads')
-      .insert({
-        type,
-        first_name: firstName,
-        full_name: fullName,
-        email,
-        role,
-        q1_answer: q1,
-        q2_answer: q2,
-        q3_answer: q3,
-      })
+      .insert(payload)
       .select('id')
       .single()
-    if (error) return { success: false, error: error.message }
+    if (error) {
+      if (error.code === '23505') return { success: false, error: 'duplicate' }
+      return { success: false, error: error.message }
+    }
     return { success: true, leadId: data.id }
   }
 
   const id = genId()
   const leads = lsGet(LS_LEADS)
-  leads.push({ id, type, first_name: firstName, full_name: fullName, email, role, q1_answer: q1, q2_answer: q2, q3_answer: q3, created_at: new Date().toISOString() })
+  leads.push({ id, ...payload, created_at: new Date().toISOString() })
   lsSet(LS_LEADS, leads)
   const emails = lsGet(LS_EMAILS)
   emails.push(email.toLowerCase())
@@ -66,14 +102,21 @@ export async function getStockLevels() {
   const stock = lsGet(LS_STOCK)
   if (stock.length === 0) {
     return [
-      { item_name: 'Chicken Tenders', remaining_stock: 40, is_active: true },
-      { item_name: 'The Classic Wrap', remaining_stock: 40, is_active: true },
+      { item_name: 'Stella Margherita Pizza', remaining_stock: 90, is_active: true },
+      { item_name: 'CRG Signature Wraps', remaining_stock: 90, is_active: true },
     ]
   }
   return stock
 }
 
+const FOOD_ID_MAP = {
+  'Stella Margherita Pizza': 'pizza',
+  'CRG Signature Wraps': 'wrap',
+}
+
 export async function createOrder({ leadId, leadEmail, itemName, restaurant }) {
+  const foodItemId = FOOD_ID_MAP[itemName] || itemName.toLowerCase().replace(/\s+/g, '-')
+
   if (supabase) {
     const { data: rpcData, error: rpcError } = await supabase.rpc('decrement_stock', { item: itemName })
     if (rpcError) return { success: false, error: rpcError.message }
@@ -81,7 +124,13 @@ export async function createOrder({ leadId, leadEmail, itemName, restaurant }) {
 
     const { data: orderData, error: orderError } = await supabase
       .from('expo_orders')
-      .insert({ lead_id: leadId, lead_email: leadEmail, item_name: itemName, restaurant })
+      .insert({
+        lead_id: leadId,
+        lead_email: leadEmail,
+        food_item_id: foodItemId,
+        food_item_name: itemName,
+        order_claimed: false,
+      })
       .select('order_number')
       .single()
     if (orderError) return { success: false, error: orderError.message }
@@ -98,8 +147,8 @@ export async function createOrder({ leadId, leadEmail, itemName, restaurant }) {
   let saved = stock
   if (saved.length === 0) {
     saved = [
-      { item_name: 'Chicken Tenders', remaining_stock: 40, is_active: true },
-      { item_name: 'The Classic Wrap', remaining_stock: 40, is_active: true },
+      { item_name: 'Stella Margherita Pizza', remaining_stock: 90, is_active: true },
+      { item_name: 'CRG Signature Wraps', remaining_stock: 90, is_active: true },
     ]
   }
   const idx = saved.findIndex((s) => s.item_name === itemName)
@@ -108,8 +157,8 @@ export async function createOrder({ leadId, leadEmail, itemName, restaurant }) {
   lsSet(LS_STOCK, saved)
 
   const orders = lsGet(LS_ORDERS)
-  const orderNumber = orders.length + 1001
-  orders.push({ id: genId(), lead_id: leadId, lead_email: leadEmail, item_name: itemName, restaurant, order_number: orderNumber, status: 'pending', created_at: new Date().toISOString() })
+  const orderNumber = `CC-${String(orders.length + 1).padStart(3, '0')}`
+  orders.push({ id: genId(), lead_id: leadId, lead_email: leadEmail, food_item_id: foodItemId, food_item_name: itemName, order_number: orderNumber, order_claimed: false, status: 'pending', created_at: new Date().toISOString() })
   lsSet(LS_ORDERS, orders)
   return { success: true, orderNumber }
 }

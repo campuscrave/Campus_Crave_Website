@@ -1,8 +1,31 @@
 const team = [
-  { initials: 'JP', name: 'Juan Pablo',      role: 'CEO', university: 'Knox College',          bio: 'CS & Econometrics double major. Building the platform end to end.' },
-  { initials: 'MG', name: 'Matias Gil',       role: 'COO', university: 'University of Tampa',   bio: 'Cyber Security & Entrepreneurship double major. Wiring the institutions.' },
-  { initials: 'FJ', name: 'Felipe Jaramillo', role: 'CFO', university: 'Duke University',        bio: 'Financial Engineering at Duke. Making the numbers work.' },
+  { name: 'Juan Pablo',      role: 'CEO', university: 'Knox College',        bio: 'CS & Econometrics double major. Building the platform end to end.' },
+  { name: 'Matias Gil',      role: 'COO', university: 'University of Tampa', bio: 'Cyber Security & Entrepreneurship double major. Wiring the institutions.' },
+  { name: 'Felipe Jaramillo', role: 'CFO', university: 'Duke University',    bio: 'Financial Engineering at Duke. Making the numbers work.' },
 ]
+
+function Avatar({ name }) {
+  if (name === 'Juan Pablo') {
+    return (
+      <div style={{ width: '80px', height: '80px', borderRadius: '50%', overflow: 'hidden', border: '3px solid #6B21A8', margin: '0 auto 16px', boxShadow: '0 0 0 4px rgba(107,33,168,0.15)' }}>
+        <img src="/JuanPablo.jpeg" alt="Juan Pablo" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
+      </div>
+    )
+  }
+  if (name === 'Matias Gil') {
+    return (
+      <div style={{ width: '80px', height: '80px', borderRadius: '50%', overflow: 'hidden', border: '3px solid #6B21A8', margin: '0 auto 16px', boxShadow: '0 0 0 4px rgba(107,33,168,0.15)' }}>
+        <img src="/Matias.jpeg" alt="Matias Gil" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 22%' }} />
+      </div>
+    )
+  }
+  // Felipe — placeholder
+  return (
+    <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'linear-gradient(135deg, #6B21A8, #9333EA)', border: '3px solid #6B21A8', boxShadow: '0 0 0 4px rgba(107,33,168,0.15)', margin: '0 auto 16px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: '700', color: 'white', fontFamily: 'Outfit' }}>
+      FJ
+    </div>
+  )
+}
 
 export default function Founders() {
   return (
@@ -18,21 +41,18 @@ export default function Founders() {
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-          {team.map(({ initials, name, role, university, bio }) => (
+          {team.map(({ name, role, university, bio }) => (
             <div key={name} className="glass-card p-8 flex flex-col items-center text-center">
-              {/* TODO: Replace with photo — <img src={`/founders/${name.toLowerCase().replace(' ', '-')}.jpg`} className="w-full h-full object-cover rounded-full" /> */}
-              <div style={{
-                width: 80, height: 80, borderRadius: '50%',
-                background: 'linear-gradient(135deg, #4C1D95, #7C3AED)',
-                border: '2px solid rgba(139,92,246,0.4)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto',
-              }}>
-                <span style={{ fontSize: '1.5rem', fontWeight: 700, color: 'white' }}>{initials}</span>
-              </div>
-              <p style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0C0118', marginTop: '1.25rem' }}>{name}</p>
+              <Avatar name={name} />
+              <p style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0C0118' }}>{name}</p>
               <p style={{ fontSize: 13, color: '#8B5CF6', fontWeight: 500, marginTop: '0.25rem' }}>{role}</p>
               <p style={{ fontSize: 12, color: '#6B7280', marginTop: '0.25rem' }}>{university}</p>
               <p style={{ fontSize: 13, color: '#6B7280', marginTop: '0.75rem', lineHeight: 1.6 }}>{bio}</p>
+              {name === 'Felipe Jaramillo' && (
+                <p style={{ fontSize: '11px', color: '#9CA3AF', marginTop: '8px', fontStyle: 'italic' }}>
+                  Photo coming soon
+                </p>
+              )}
             </div>
           ))}
         </div>

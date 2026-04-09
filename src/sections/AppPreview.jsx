@@ -56,15 +56,17 @@ export default function AppPreview() {
 
         <div className="mt-12 text-center">
           <p style={{ color: '#6B7280', fontSize: 14 }}>Own a restaurant near UT Tampa?</p>
-          <button
+          <a
+            href="https://mail.google.com/mail/?view=cm&to=restaurants@campus-crave.com&su=Restaurant%20Partnership%20-%20CampusCrave&body=Hi%20CampusCrave%20team%2C%20I'm%20interested%20in%20partnering%20my%20restaurant%20with%20your%20platform."
+            target="_blank"
+            rel="noopener noreferrer"
             className="mt-2 font-semibold bg-transparent border-none"
-            style={{ color: '#8B5CF6', cursor: 'pointer', textDecoration: 'none' }}
+            style={{ color: '#8B5CF6', cursor: 'pointer', textDecoration: 'none', display: 'inline-block' }}
             onMouseEnter={(e) => { e.currentTarget.style.textDecoration = 'underline' }}
             onMouseLeave={(e) => { e.currentTarget.style.textDecoration = 'none' }}
-            onClick={() => { window.location.href = 'mailto:hello@campuscrave.com?subject=Restaurant Partnership' }}
           >
             Let&apos;s talk →
-          </button>
+          </a>
           <p className="mt-3 text-xs" style={{ color: '#6B7280' }}>
             Currently accepting applications from CRG and independent restaurants within 1.4mi of campus
           </p>

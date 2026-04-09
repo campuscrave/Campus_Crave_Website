@@ -25,24 +25,27 @@ export default function CTA() {
         </p>
 
         <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap', marginTop: '2.5rem' }}>
-          <button
+          <a
+            href="https://mail.google.com/mail/?view=cm&to=hello@campus-crave.com&su=Early%20Access%20Request%20-%20CampusCrave&body=Hi%20CampusCrave%20team%2C%20I'd%20like%20early%20access%20to%20the%20platform."
+            target="_blank"
+            rel="noopener noreferrer"
             style={{
               background: '#6B21A8', color: 'white',
               padding: '1rem 2rem', borderRadius: 12,
               fontWeight: 600, fontSize: '1rem',
               border: 'none', cursor: 'pointer', transition: 'background 200ms',
+              textDecoration: 'none', display: 'inline-block',
             }}
             onMouseEnter={(e) => { e.currentTarget.style.background = '#5B1A9F' }}
             onMouseLeave={(e) => { e.currentTarget.style.background = '#6B21A8' }}
-            onClick={() => {
-              if (window.openExpoModal) { window.openExpoModal() }
-              else { window.location.href = 'mailto:hello@campuscrave.com?subject=Student Early Access' }
-            }}
           >
             Get Early Access
-          </button>
+          </a>
 
-          <button
+          <a
+            href="https://mail.google.com/mail/?view=cm&to=partners@campus-crave.com&su=University%20Partnership%20-%20CampusCrave&body=Hi%20CampusCrave%20team%2C%20I'm%20interested%20in%20a%20university%20partnership."
+            target="_blank"
+            rel="noopener noreferrer"
             style={{
               background: 'transparent',
               border: '1.5px solid rgba(107,33,168,0.5)',
@@ -50,17 +53,17 @@ export default function CTA() {
               padding: '1rem 2rem', borderRadius: 12,
               fontWeight: 600, fontSize: '1rem',
               cursor: 'pointer', transition: 'all 200ms',
+              textDecoration: 'none', display: 'inline-block',
             }}
             onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(107,33,168,0.1)' }}
             onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
-            onClick={() => { window.location.href = 'mailto:hello@campuscrave.com?subject=Partnership Inquiry — CampusCrave' }}
           >
             Partner with Us
-          </button>
+          </a>
         </div>
 
         <p style={{ marginTop: '2rem', fontSize: 12, color: '#6B7280' }}>
-          University of Tampa pilot · Spring 2026 · hello@campuscrave.com
+          University of Tampa pilot · Spring 2026 · hello@campus-crave.com
         </p>
       </div>
     </section>
