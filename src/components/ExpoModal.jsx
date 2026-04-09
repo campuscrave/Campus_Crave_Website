@@ -343,6 +343,8 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
           setOrderNumber(result.orderNumber);
           setCurrentStep('confirmation');
         } else {
+          const errDetail = result && result.error ? result.error : 'unknown';
+          console.error('[CampusCrave] createOrder failed:', errDetail);
           setSwipeErrMsg('Something went wrong. Tap to try again.');
         }
       } else {
@@ -351,7 +353,8 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
         setOrderNumber(`CC-${fakeNum}`);
         setCurrentStep('confirmation');
       }
-    } catch (_e) {
+    } catch (e) {
+      console.error('[CampusCrave] createOrder threw:', e);
       setSwipeErrMsg('Something went wrong. Tap to try again.');
     } finally {
       setSwipeLoading(false);

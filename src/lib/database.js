@@ -22,36 +22,12 @@ export async function checkEmailExists(email) {
 }
 
 function buildLeadPayload(baseData, q1, q2, q3) {
-  const { type } = baseData
-
-  if (type === 'student') {
-    return {
-      ...baseData,
-      year_in_school: q1,
-      campus_dining_frustration: q2,
-      willingness_to_pay: q3,
-    }
+  return {
+    ...baseData,
+    q1_answer: q1,
+    q2_answer: q2,
+    q3_answer: q3,
   }
-
-  if (type === 'professor') {
-    return {
-      ...baseData,
-      department: q1,
-      meeting_frequency: q2,
-      dining_credits_interest: q3,
-    }
-  }
-
-  if (type === 'investor') {
-    return {
-      ...baseData,
-      connection_to_campus: q1,
-      spending_awareness: q2,
-      prepaid_plan_interest: q3,
-    }
-  }
-
-  return baseData
 }
 
 export async function createLead({ type, firstName, fullName, email, role, q1, q2, q3 }) {
@@ -109,16 +85,9 @@ export async function getStockLevels() {
   return stock
 }
 
-const FOOD_ID_MAP = {
-  'Stella Margherita Pizza': 'pizza',
-  'CRG Signature Wraps': 'wrap',
-}
-
 export async function createOrder({ leadId, leadEmail, itemName, restaurant }) {
-  const foodItemId = FOOD_ID_MAP[itemName] || itemName.toLowerCase().replace(/\s+/g, '-')
-
   if (supabase) {
-    const { data: rpcData, error: rpcError } = await supabase.rpc('decrement_stock', { item: itemName })
+    const { data: rpcData, error: rpcError } = await supabase.rpc('decrement_stock', { p_item_name: itemName })
     if (rpcError) return { success: false, error: rpcError.message }
     if (rpcData === -1) return { success: false, error: 'sold_out' }
 
@@ -127,9 +96,8 @@ export async function createOrder({ leadId, leadEmail, itemName, restaurant }) {
       .insert({
         lead_id: leadId,
         lead_email: leadEmail,
-        food_item_id: foodItemId,
-        food_item_name: itemName,
-        order_claimed: false,
+        item_name: itemName,
+        restaurant: restaurant,
       })
       .select('order_number')
       .single()
@@ -140,7 +108,7 @@ export async function createOrder({ leadId, leadEmail, itemName, restaurant }) {
       .update({ order_placed: true })
       .eq('id', leadId)
 
-    return { success: true, orderNumber: orderData.order_number }
+    return { success: true, orderNumber: `CC-${String(orderData.order_number).padStart(3, '0')}` }
   }
 
   const stock = lsGet(LS_STOCK)
