@@ -91,16 +91,20 @@ export async function createOrder({ leadId, leadEmail, itemName, restaurant }) {
     if (rpcError) return { success: false, error: rpcError.message }
     if (rpcData === -1) return { success: false, error: 'sold_out' }
 
-    const { data: orderData, error: orderError } = await supabase
+    const { count } = await supabase
+      .from('expo_orders')
+      .select('*', { count: 'exact', head: true })
+    const orderNumber = 'CC-' + String((count || 0) + 1).padStart(3, '0')
+
+    const { error: orderError } = await supabase
       .from('expo_orders')
       .insert({
         lead_id: leadId,
         lead_email: leadEmail,
         item_name: itemName,
         restaurant: restaurant,
+        order_number: orderNumber,
       })
-      .select('order_number')
-      .single()
     if (orderError) return { success: false, error: orderError.message }
 
     await supabase
@@ -108,7 +112,7 @@ export async function createOrder({ leadId, leadEmail, itemName, restaurant }) {
       .update({ order_claimed: true })
       .eq('id', leadId)
 
-    return { success: true, orderNumber: orderData.order_number }
+    return { success: true, orderNumber }
   }
 
   const stock = lsGet(LS_STOCK)

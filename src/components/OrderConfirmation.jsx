@@ -25,7 +25,7 @@ export default function OrderConfirmation({ firstName, orderNumber, itemName, re
     setConfetti(pieces);
   }, []);
 
-  const formattedOrder = '#CC-' + String(orderNumber).padStart(4, '0');
+  const formattedOrder = '#' + String(orderNumber);
 
   // Derive emoji from itemName
   const emoji = itemName && itemName.toLowerCase().includes('wrap') ? '🌯' : '🍗';
