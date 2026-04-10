@@ -162,6 +162,9 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
   const [waitlistEmail, setWaitlistEmail] = useState('');
   const [waitlistDone, setWaitlistDone] = useState(false);
 
+  // ── Survey submission error ──
+  const [surveyError, setSurveyError] = useState(null);
+
   // ── Reset state when modal opens ──
   useEffect(() => {
     if (isOpen) {
@@ -177,6 +180,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
       setSwipeErrMsg('');
       setWaitlistEmail('');
       setWaitlistDone(false);
+      setSurveyError(null);
     }
   }, [isOpen]);
 
@@ -266,62 +270,71 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
     setCurrentStep('visitor-questions');
   };
 
-  // ── Student survey submit ──
-  const handleStudentSave = async () => {
+  // ── Shared lead-save helper ──
+  // Returns true if the caller should advance to ordering, false if it should stop.
+  const saveLeadAndAdvance = async (leadPayload) => {
+    setSurveyError(null);
     if (window.__db && window.__db.createLead) {
       try {
-        const result = await window.__db.createLead({
-          type: 'student',
-          firstName: formData.firstName,
-          email: formData.email,
-          q1: formData.q1Answer,
-          q2: formData.q2Answer,
-          q3: formData.q3Answer,
-        });
-        if (result && result.error === 'duplicate') { setCurrentStep('already-ordered'); return; }
-        if (result && result.leadId) setLeadId(result.leadId);
-      } catch (_e) { /* proceed regardless */ }
+        const result = await window.__db.createLead(leadPayload);
+        if (result && result.error === 'duplicate') { setCurrentStep('already-ordered'); return false; }
+        if (result && result.leadId) {
+          setLeadId(result.leadId);
+        } else {
+          // createLead returned but gave no leadId — surface the error so the
+          // user can retry rather than proceeding with a null lead_id.
+          const msg = (result && result.error) ? result.error : 'unknown';
+          console.error('[CampusCrave] createLead failed:', msg);
+          setSurveyError('Could not save your info. Please try again.');
+          return false;
+        }
+      } catch (e) {
+        console.error('[CampusCrave] createLead threw:', e);
+        setSurveyError('Network error — please check your connection and try again.');
+        return false;
+      }
     }
-    setCurrentStep('ordering');
+    return true;
+  };
+
+  // ── Student survey submit ──
+  const handleStudentSave = async () => {
+    const ok = await saveLeadAndAdvance({
+      type: 'student',
+      firstName: formData.firstName,
+      email: formData.email,
+      q1: formData.q1Answer,
+      q2: formData.q2Answer,
+      q3: formData.q3Answer,
+    });
+    if (ok) setCurrentStep('ordering');
   };
 
   // ── Professor survey submit ──
   const handleProfessorSave = async () => {
-    if (window.__db && window.__db.createLead) {
-      try {
-        const result = await window.__db.createLead({
-          type: 'professor',
-          fullName: formData.fullName,
-          email: formData.email,
-          q1: formData.q1Answer,
-          q2: formData.q2Answer,
-          q3: formData.q3Answer,
-        });
-        if (result && result.error === 'duplicate') { setCurrentStep('already-ordered'); return; }
-        if (result && result.leadId) setLeadId(result.leadId);
-      } catch (_e) { /* proceed regardless */ }
-    }
-    setCurrentStep('ordering');
+    const ok = await saveLeadAndAdvance({
+      type: 'professor',
+      fullName: formData.fullName,
+      email: formData.email,
+      q1: formData.q1Answer,
+      q2: formData.q2Answer,
+      q3: formData.q3Answer,
+    });
+    if (ok) setCurrentStep('ordering');
   };
 
   // ── Investor survey submit ──
   const handleVisitorSave = async () => {
-    if (window.__db && window.__db.createLead) {
-      try {
-        const result = await window.__db.createLead({
-          type: 'investor',
-          fullName: formData.fullName,
-          email: formData.email,
-          role: formData.role,
-          q1: formData.q1Answer,
-          q2: formData.q2Answer,
-          q3: formData.q3Answer,
-        });
-        if (result && result.error === 'duplicate') { setCurrentStep('already-ordered'); return; }
-        if (result && result.leadId) setLeadId(result.leadId);
-      } catch (_e) { /* proceed regardless */ }
-    }
-    setCurrentStep('ordering');
+    const ok = await saveLeadAndAdvance({
+      type: 'investor',
+      fullName: formData.fullName,
+      email: formData.email,
+      role: formData.role,
+      q1: formData.q1Answer,
+      q2: formData.q2Answer,
+      q3: formData.q3Answer,
+    });
+    if (ok) setCurrentStep('ordering');
   };
 
   // ── Swipe success handler ──
@@ -759,6 +772,9 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
                   </div>
 
                   <div style={{ position: 'sticky', bottom: 0, background: '#ffffff', padding: '0.75rem 0 0', marginTop: '0.75rem', borderTop: '1px solid #F3F4F6' }}>
+                    {surveyError && (
+                      <div style={{ ...s.errorMsg, marginBottom: '0.5rem', textAlign: 'center' }}>{surveyError}</div>
+                    )}
                     <button
                       style={{
                         ...s.primaryBtn,
@@ -848,6 +864,9 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
                   </div>
 
                   <div style={{ position: 'sticky', bottom: 0, background: '#ffffff', padding: '0.75rem 0 0', marginTop: '0.75rem', borderTop: '1px solid #F3F4F6' }}>
+                    {surveyError && (
+                      <div style={{ ...s.errorMsg, marginBottom: '0.5rem', textAlign: 'center' }}>{surveyError}</div>
+                    )}
                     <button
                       style={{
                         ...s.primaryBtn,
@@ -937,6 +956,9 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
                   </div>
 
                   <div style={{ position: 'sticky', bottom: 0, background: '#ffffff', padding: '0.75rem 0 0', marginTop: '0.75rem', borderTop: '1px solid #F3F4F6' }}>
+                    {surveyError && (
+                      <div style={{ ...s.errorMsg, marginBottom: '0.5rem', textAlign: 'center' }}>{surveyError}</div>
+                    )}
                     <button
                       style={{
                         ...s.primaryBtn,

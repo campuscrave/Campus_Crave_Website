@@ -11,14 +11,15 @@ const genId = () => Math.random().toString(36).slice(2, 11)
 
 export async function checkEmailExists(email) {
   if (supabase) {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('expo_leads')
       .select('id')
-      .eq('email', email)
+      .eq('email', email.trim().toLowerCase())
       .limit(1)
+    if (error) throw new Error(error.message)
     return !!(data && data.length > 0)
   }
-  return lsGet(LS_EMAILS).includes(email.toLowerCase())
+  return lsGet(LS_EMAILS).includes(email.trim().toLowerCase())
 }
 
 function buildLeadPayload(baseData, q1, q2, q3) {
@@ -32,14 +33,15 @@ function buildLeadPayload(baseData, q1, q2, q3) {
 
 export async function createLead({ type, firstName, fullName, email, role, q1, q2, q3 }) {
   if (!email) return { success: false, error: 'missing_email' }
-  const exists = await checkEmailExists(email)
+  const normalizedEmail = email.trim().toLowerCase()
+  const exists = await checkEmailExists(normalizedEmail)
   if (exists) return { success: false, error: 'duplicate' }
 
   const baseData = {
     type,
     first_name: firstName,
     full_name: fullName,
-    email,
+    email: normalizedEmail,
     role,
   }
   const payload = buildLeadPayload(baseData, q1, q2, q3)
@@ -91,6 +93,21 @@ export async function createOrder({ leadId, leadEmail, itemName, restaurant }) {
     if (rpcError) return { success: false, error: rpcError.message }
     if (rpcData === -1) return { success: false, error: 'sold_out' }
 
+    // Resolve lead_id from email when it wasn't carried through the form flow.
+    // This covers the case where createLead succeeded in the DB but the returned
+    // id was lost (transient error, silent catch), or where the lead was created
+    // in a prior session and the in-memory leadId is stale/null.
+    let resolvedLeadId = leadId
+    if (!resolvedLeadId && leadEmail) {
+      const { data: leadRow } = await supabase
+        .from('expo_leads')
+        .select('id')
+        .eq('email', leadEmail.trim().toLowerCase())
+        .limit(1)
+        .single()
+      resolvedLeadId = leadRow?.id ?? null
+    }
+
     const { count } = await supabase
       .from('expo_orders')
       .select('*', { count: 'exact', head: true })
@@ -99,7 +116,7 @@ export async function createOrder({ leadId, leadEmail, itemName, restaurant }) {
     const { error: orderError } = await supabase
       .from('expo_orders')
       .insert({
-        lead_id: leadId,
+        lead_id: resolvedLeadId,
         lead_email: leadEmail,
         item_name: itemName,
         restaurant: restaurant,
@@ -107,10 +124,12 @@ export async function createOrder({ leadId, leadEmail, itemName, restaurant }) {
       })
     if (orderError) return { success: false, error: orderError.message }
 
-    await supabase
-      .from('expo_leads')
-      .update({ order_claimed: true })
-      .eq('id', leadId)
+    if (resolvedLeadId) {
+      await supabase
+        .from('expo_leads')
+        .update({ order_claimed: true })
+        .eq('id', resolvedLeadId)
+    }
 
     return { success: true, orderNumber }
   }
