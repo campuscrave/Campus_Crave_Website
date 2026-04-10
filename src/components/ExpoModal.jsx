@@ -157,6 +157,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
   // ── Swipe step ──
   const [swipeLoading, setSwipeLoading] = useState(false);
   const [swipeErrMsg, setSwipeErrMsg] = useState('');
+  const [swipeKey, setSwipeKey] = useState(0);
 
   // ── Sold-out waitlist ──
   const [waitlistEmail, setWaitlistEmail] = useState('');
@@ -348,6 +349,22 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
     setSwipeLoading(true);
     setSwipeErrMsg('');
     try {
+      // Pre-check stock before hitting createOrder — if we can read it and it's 0, bail early.
+      // If getStockLevels throws, we fall through and let decrement_stock handle it server-side.
+      if (window.__db && window.__db.getStockLevels && selectedItem) {
+        try {
+          const levels = await window.__db.getStockLevels();
+          const level = levels.find((l) => l.item_name === selectedItem.name);
+          if (level && level.remaining_stock <= 0) {
+            setSwipeErrMsg('Sorry, this item just sold out! Please go back and pick another option.');
+            setSwipeKey((k) => k + 1);
+            return;
+          }
+        } catch (_stockErr) {
+          // Stock check failed — proceed anyway, server-side will enforce
+        }
+      }
+
       if (window.__db && window.__db.createOrder) {
         const result = await window.__db.createOrder({
           leadId: leadId,
@@ -1151,6 +1168,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
                   </div>
 
                   <SwipeButton
+                    key={swipeKey}
                     label="Slide to place your order →"
                     onSuccess={handleSwipeSuccess}
                     disabled={swipeLoading}
