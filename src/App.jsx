@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import { Routes, Route } from 'react-router-dom'
+import ExpoDashboard from './pages/ExpoDashboard'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ExpoModal from './components/ExpoModal'
@@ -16,11 +18,18 @@ import IDShowcase from './sections/IDShowcase'
 import CraveAI from './components/CraveAI'
 
 export default function App() {
+  return (
+    <Routes>
+      <Route path="/expo/dashboard" element={<ExpoDashboard />} />
+      <Route path="*" element={<MarketingSite />} />
+    </Routes>
+  )
+}
+
+function MarketingSite() {
   const [expoModalOpen, setExpoModalOpen] = useState(false)
 
   useEffect(() => {
-    // Always clear dismissed state on fresh page load
-    // so the popup appears on every refresh as intended
     sessionStorage.removeItem('cc_modal_dismissed')
     setTimeout(() => setExpoModalOpen(true), 2500)
 
@@ -69,3 +78,4 @@ export default function App() {
     </>
   )
 }
+
