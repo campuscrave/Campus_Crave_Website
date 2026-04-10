@@ -131,20 +131,16 @@ export async function createOrder({ leadId, leadEmail, itemName, restaurant }) {
       resolvedLeadId = leadRow?.id ?? null
     }
 
-    const { count } = await supabase
-      .from('expo_orders')
-      .select('*', { count: 'exact', head: true })
-    const orderNumber = 'CC-' + String((count || 0) + 1).padStart(3, '0')
-
-    const { error: orderError } = await supabase
+    const { data: orderData, error: orderError } = await supabase
       .from('expo_orders')
       .insert({
         lead_id: resolvedLeadId,
         lead_email: leadEmail,
         item_name: itemName,
         restaurant: restaurant,
-        order_number: orderNumber,
       })
+      .select('order_number')
+      .single()
     if (orderError) return { success: false, error: orderError.message }
 
     if (resolvedLeadId) {
@@ -154,7 +150,7 @@ export async function createOrder({ leadId, leadEmail, itemName, restaurant }) {
         .eq('id', resolvedLeadId)
     }
 
-    return { success: true, orderNumber }
+    return { success: true, orderNumber: orderData?.order_number }
   }
 
   const stock = lsGet(LS_STOCK)
@@ -172,7 +168,8 @@ export async function createOrder({ leadId, leadEmail, itemName, restaurant }) {
 
   const orders = lsGet(LS_ORDERS)
   const orderNumber = `CC-${String(orders.length + 1).padStart(3, '0')}`
-  orders.push({ id: genId(), lead_id: leadId, lead_email: leadEmail, food_item_id: foodItemId, food_item_name: itemName, order_number: orderNumber, order_claimed: false, status: 'pending', created_at: new Date().toISOString() })
+  const orderNumber = `CC-${String(orders.length + 1).padStart(3, '0')}`
+  orders.push({ id: genId(), lead_id: leadId, lead_email: leadEmail, item_name: itemName, order_number: orderNumber, order_claimed: false, status: 'pending', created_at: new Date().toISOString() })
   lsSet(LS_ORDERS, orders)
   return { success: true, orderNumber }
 }

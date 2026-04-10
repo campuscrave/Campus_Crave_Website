@@ -164,6 +164,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
 
   // ── Survey submission error ──
   const [surveyError, setSurveyError] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   // ── Reset state when modal opens ──
   useEffect(() => {
@@ -274,8 +275,9 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
   // Returns true if the caller should advance to ordering, false if it should stop.
   const saveLeadAndAdvance = async (leadPayload) => {
     setSurveyError(null);
-    if (window.__db && window.__db.createLead) {
-      try {
+    setIsSaving(true);
+    try {
+      if (window.__db && window.__db.createLead) {
         const result = await window.__db.createLead(leadPayload);
         if (result && result.error === 'duplicate') { setCurrentStep('already-ordered'); return false; }
         if (result && result.leadId) {
@@ -288,13 +290,15 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
           setSurveyError('Could not save your info. Please try again.');
           return false;
         }
-      } catch (e) {
-        console.error('[CampusCrave] createLead threw:', e);
-        setSurveyError('Network error — please check your connection and try again.');
-        return false;
       }
+      return true;
+    } catch (e) {
+      console.error('[CampusCrave] createLead threw:', e);
+      setSurveyError('Network error — please check your connection and try again.');
+      return false;
+    } finally {
+      setIsSaving(false);
     }
-    return true;
   };
 
   // ── Student survey submit ──
@@ -776,16 +780,17 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
                       <div style={{ ...s.errorMsg, marginBottom: '0.5rem', textAlign: 'center' }}>{surveyError}</div>
                     )}
                     <button
+                      disabled={isSaving}
                       style={{
                         ...s.primaryBtn,
-                        opacity: allStudentAnswered ? 1 : 0.45,
-                        cursor: allStudentAnswered ? 'pointer' : 'not-allowed',
+                        opacity: allStudentAnswered && !isSaving ? 1 : 0.45,
+                        cursor: allStudentAnswered && !isSaving ? 'pointer' : 'not-allowed',
                       }}
-                      onClick={allStudentAnswered ? handleStudentSave : undefined}
-                      onMouseEnter={(e) => { if (allStudentAnswered) e.currentTarget.style.background = '#5B1A9F'; }}
+                      onClick={allStudentAnswered && !isSaving ? handleStudentSave : undefined}
+                      onMouseEnter={(e) => { if (allStudentAnswered && !isSaving) e.currentTarget.style.background = '#5B1A9F'; }}
                       onMouseLeave={(e) => (e.currentTarget.style.background = '#6B21A8')}
                     >
-                      Claim My Free Order →
+                      {isSaving ? 'Saving...' : 'Claim My Free Order →'}
                     </button>
                   </div>
                 </div>
@@ -868,16 +873,17 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
                       <div style={{ ...s.errorMsg, marginBottom: '0.5rem', textAlign: 'center' }}>{surveyError}</div>
                     )}
                     <button
+                      disabled={isSaving}
                       style={{
                         ...s.primaryBtn,
-                        opacity: allProfessorAnswered ? 1 : 0.45,
-                        cursor: allProfessorAnswered ? 'pointer' : 'not-allowed',
+                        opacity: allProfessorAnswered && !isSaving ? 1 : 0.45,
+                        cursor: allProfessorAnswered && !isSaving ? 'pointer' : 'not-allowed',
                       }}
-                      onClick={allProfessorAnswered ? handleProfessorSave : undefined}
-                      onMouseEnter={(e) => { if (allProfessorAnswered) e.currentTarget.style.background = '#5B1A9F'; }}
+                      onClick={allProfessorAnswered && !isSaving ? handleProfessorSave : undefined}
+                      onMouseEnter={(e) => { if (allProfessorAnswered && !isSaving) e.currentTarget.style.background = '#5B1A9F'; }}
                       onMouseLeave={(e) => (e.currentTarget.style.background = '#6B21A8')}
                     >
-                      Claim My Free Order →
+                      {isSaving ? 'Saving...' : 'Claim My Free Order →'}
                     </button>
                   </div>
                 </div>
@@ -960,16 +966,17 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
                       <div style={{ ...s.errorMsg, marginBottom: '0.5rem', textAlign: 'center' }}>{surveyError}</div>
                     )}
                     <button
+                      disabled={isSaving}
                       style={{
                         ...s.primaryBtn,
-                        opacity: allVisitorAnswered ? 1 : 0.45,
-                        cursor: allVisitorAnswered ? 'pointer' : 'not-allowed',
+                        opacity: allVisitorAnswered && !isSaving ? 1 : 0.45,
+                        cursor: allVisitorAnswered && !isSaving ? 'pointer' : 'not-allowed',
                       }}
-                      onClick={allVisitorAnswered ? handleVisitorSave : undefined}
-                      onMouseEnter={(e) => { if (allVisitorAnswered) e.currentTarget.style.background = '#5B1A9F'; }}
+                      onClick={allVisitorAnswered && !isSaving ? handleVisitorSave : undefined}
+                      onMouseEnter={(e) => { if (allVisitorAnswered && !isSaving) e.currentTarget.style.background = '#5B1A9F'; }}
                       onMouseLeave={(e) => (e.currentTarget.style.background = '#6B21A8')}
                     >
-                      Claim My Free Order →
+                      {isSaving ? 'Saving...' : 'Claim My Free Order →'}
                     </button>
                   </div>
                 </div>
