@@ -149,10 +149,17 @@ export async function createOrder({ leadId, leadEmail, itemName, restaurant }) {
     }
 
     if (resolvedLeadId) {
-      await supabase
-        .from('expo_leads')
-        .update({ order_claimed: true })
-        .eq('id', resolvedLeadId)
+      try {
+        const { error: claimError } = await supabase
+          .from('expo_leads')
+          .update({ order_claimed: true })
+          .eq('id', resolvedLeadId)
+        if (claimError) {
+          console.error('[CampusCrave] order_claimed update failed for lead', resolvedLeadId, claimError.message)
+        }
+      } catch (claimErr) {
+        console.error('[CampusCrave] order_claimed update threw for lead', resolvedLeadId, claimErr)
+      }
     }
 
     return { success: true, orderNumber: orderData?.order_number }

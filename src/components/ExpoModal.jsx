@@ -167,13 +167,30 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
   const [surveyError, setSurveyError] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  // ── Reset state when modal opens ──
+  // ── Reset state when modal opens (restore session progress if available) ──
   useEffect(() => {
     if (isOpen) {
-      setCurrentStep('reward');
-      setUserType(null);
+      let restored = false;
+      try {
+        const saved = sessionStorage.getItem('cc_survey_progress');
+        if (saved) {
+          const progress = JSON.parse(saved);
+          if (progress.currentStep && progress.currentStep !== 'confirmation') {
+            setCurrentStep(progress.currentStep);
+            setFormData((prev) => ({ ...prev, ...progress.formData }));
+            setUserType(progress.userType ?? null);
+            restored = true;
+          }
+        }
+      } catch (_e) { /* ignore */ }
+
+      if (!restored) {
+        setCurrentStep('reward');
+        setUserType(null);
+        setFormData({ firstName: '', fullName: '', email: '', role: '', q1Answer: '', q2Answer: '', q3Answer: '' });
+      }
+      // These always reset — never persist sensitive or transient state
       setLeadId(null);
-      setFormData({ firstName: '', fullName: '', email: '', role: '', q1Answer: '', q2Answer: '', q3Answer: '' });
       setErrors({});
       setSelectedItem(null);
       setStockLevels([]);
@@ -206,9 +223,17 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
     })();
   }, [currentStep]);
 
+  // ── Persist survey progress to sessionStorage ──
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('cc_survey_progress', JSON.stringify({ currentStep, formData, userType }));
+    } catch (_e) { /* ignore */ }
+  }, [currentStep, formData, userType]);
+
   // ── Confirmation step effect (lifted from inner StepConfirmation) ──
   useEffect(() => {
     if (currentStep !== 'confirmation') return;
+    try { sessionStorage.removeItem('cc_survey_progress'); } catch (_e) { /* ignore */ }
     (async () => {
       try {
         if (window.__db && window.__db.getOrderCount) {
@@ -487,8 +512,12 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
 
   const handleClose = () => {
     if (hasStartedSurvey) {
-      if (window.confirm('¿Seguro que quieres salir? Perderás tu progreso.')) onClose();
+      if (window.confirm('¿Seguro que quieres salir? Perderás tu progreso.')) {
+        try { sessionStorage.removeItem('cc_survey_progress'); } catch (_e) { /* ignore */ }
+        onClose();
+      }
     } else {
+      try { sessionStorage.removeItem('cc_survey_progress'); } catch (_e) { /* ignore */ }
       onClose();
     }
   };
@@ -579,7 +608,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
                 position:'relative',
               }}>
                 <button
-                  onClick={()=>{sessionStorage.setItem('cc_modal_dismissed','true');onClose();}}
+                  onClick={()=>{try{sessionStorage.removeItem('cc_survey_progress');}catch(_e){}sessionStorage.setItem('cc_modal_dismissed','true');onClose();}}
                   style={{position:'absolute',top:12,right:12,width:28,height:28,borderRadius:'50%',background:'rgba(255,255,255,0.2)',border:'none',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',color:'white',fontSize:14,fontWeight:700}}
                 >✕</button>
                 <div style={{width:48,height:48,borderRadius:'50%',background:'#22C55E',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 0.75rem',fontSize:'1.5rem'}}>✓</div>
