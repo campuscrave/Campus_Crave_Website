@@ -463,6 +463,20 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
     (formData.fullName ? formData.fullName.split(' ')[0] : '') ||
     'Friend';
 
+  const surveySteps = ['student-questions', 'professor-questions', 'visitor-questions', 'student-form', 'professor-form', 'visitor-form'];
+  const hasStartedSurvey =
+    surveySteps.includes(currentStep) &&
+    !!(formData.q1Answer || formData.q2Answer || formData.q3Answer || formData.firstName || formData.fullName || formData.email) ||
+    currentStep === 'ordering';
+
+  const handleClose = () => {
+    if (hasStartedSurvey) {
+      if (window.confirm('¿Seguro que quieres salir? Perderás tu progreso.')) onClose();
+    } else {
+      onClose();
+    }
+  };
+
   return (
     <>
       <style>{`
@@ -476,7 +490,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
         onClick={(e) => {
           if (e.target === e.currentTarget) {
             sessionStorage.setItem('cc_modal_dismissed', 'true');
-            onClose();
+            handleClose();
           }
         }}
         onWheel={(e) => e.stopPropagation()}
@@ -511,7 +525,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
         >
           {showClose && (
             <button
-              onClick={onClose}
+              onClick={handleClose}
               aria-label="Close"
               style={{
                 position: 'absolute',
