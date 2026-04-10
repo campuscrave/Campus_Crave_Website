@@ -314,13 +314,28 @@ const MOCK_DATA = {
   ],
 }
 
-const ACTIVITY_FEED = [
-  { type: 'order',  text: 'New order from jsmith@ut.edu',      time: '2 min ago' },
-  { type: 'survey', text: 'Survey completed by tkumar@ut.edu', time: '8 min ago' },
-  { type: 'email',  text: 'Email captured: mrodriguez@ut.edu', time: '14 min ago' },
-  { type: 'order',  text: 'New order from alopez@ut.edu',      time: '19 min ago' },
-  { type: 'survey', text: 'Survey completed by jsmith@ut.edu', time: '24 min ago' },
-]
+function formatTimeAgo(timestamp) {
+  const diff = Math.floor((Date.now() - timestamp) / 1000)
+  if (diff < 60) return `${diff}s ago`
+  if (diff < 3600) return `${Math.floor(diff / 60)} min ago`
+  return `${Math.floor(diff / 3600)}h ago`
+}
+
+function buildActivityFeed(orders, emails) {
+  const events = []
+  ;(orders || []).slice(0, 5).forEach((order) => {
+    const ts = order.raw_created_at ? new Date(order.raw_created_at).getTime() : Date.now()
+    events.push({ type: 'order', color: '#22C55E', text: `New order from ${order.student || 'student'}`, ts })
+  })
+  ;(emails || []).slice(0, 5).forEach((e) => {
+    const ts = e.raw_created_at ? new Date(e.raw_created_at).getTime() : Date.now()
+    events.push({ type: 'email', color: '#8B5CF6', text: `Email captured: ${e.email}`, ts })
+  })
+  return events
+    .sort((a, b) => b.ts - a.ts)
+    .slice(0, 5)
+    .map((e) => ({ ...e, timeLabel: formatTimeAgo(e.ts) }))
+}
 
 // ── Small inline SVG icons ────────────────────────────────────────────────────
 
@@ -349,6 +364,13 @@ function IconOverview() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+    </svg>
+  )
+}
+function IconAnalytics() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/>
     </svg>
   )
 }
@@ -411,15 +433,16 @@ function EmptyState({ message }) {
 
 // ── Overview tab ──────────────────────────────────────────────────────────────
 
-function OverviewTab({ data }) {
+function OverviewTab({ data, activeUsers, analytics }) {
   const stats = [
-    { label: 'Total Orders',        value: data.orders.length,  sub: 'orders placed today',    icon: '🛒' },
-    { label: 'Surveys Completed',   value: data.surveys.length, sub: 'responses collected',    icon: '📋' },
-    { label: 'Emails Captured',     value: data.emails.length,  sub: 'unique emails',          icon: '📧' },
-    { label: 'Active Now',          value: 7,                   sub: 'viewing the app',        icon: '👁' },
+    { label: 'Total Orders',      value: data.orders.length,               sub: 'orders placed today',  icon: '🛒' },
+    { label: 'Surveys Completed', value: data.surveys.length,              sub: 'responses collected',  icon: '📋' },
+    { label: 'Emails Captured',   value: data.emails.length,               sub: 'unique emails',        icon: '📧' },
+    { label: 'Active Now',        value: activeUsers,                      sub: 'viewing the app',      icon: '👁' },
+    { label: 'Engagement Rate',   value: `${analytics?.engagementRate ?? 0}%`, sub: 'stayed 20+ sec',  icon: '📊' },
   ]
 
-  const dotColor = { order: '#22C55E', survey: '#3B82F6', email: '#8B5CF6' }
+  const feed = buildActivityFeed(data.orders, data.emails)
 
   return (
     <div>
@@ -427,12 +450,8 @@ function OverviewTab({ data }) {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
         {stats.map((s) => (
           <div key={s.label} style={{
-            background: '#fff',
-            border: '1px solid #F3F4F6',
-            borderRadius: '16px',
-            padding: '1.5rem',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
-            position: 'relative',
+            background: '#fff', border: '1px solid #F3F4F6', borderRadius: '16px',
+            padding: '1.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', position: 'relative',
           }}>
             <div style={{ position: 'absolute', top: '1.25rem', right: '1.25rem', fontSize: '1.25rem', opacity: 0.5 }}>
               {s.icon}
@@ -451,15 +470,19 @@ function OverviewTab({ data }) {
         <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid #F3F4F6' }}>
           <span style={{ fontSize: '13px', fontWeight: 600, color: '#374151' }}>Recent Activity</span>
         </div>
-        {ACTIVITY_FEED.map((ev, i) => (
+        {feed.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '2rem', color: '#9CA3AF', fontSize: '13px' }}>
+            No activity yet — orders and sign-ups will appear here in real time.
+          </div>
+        ) : feed.map((ev, i) => (
           <div key={i} style={{
             display: 'flex', alignItems: 'center', gap: '12px',
             padding: '0.875rem 1.5rem',
-            borderBottom: i < ACTIVITY_FEED.length - 1 ? '1px solid #F9FAFB' : 'none',
+            borderBottom: i < feed.length - 1 ? '1px solid #F9FAFB' : 'none',
           }}>
-            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: dotColor[ev.type], flexShrink: 0 }} />
+            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: ev.color, flexShrink: 0 }} />
             <span style={{ flex: 1, fontSize: '13px', color: '#374151' }}>{ev.text}</span>
-            <span style={{ fontSize: '12px', color: '#9CA3AF', whiteSpace: 'nowrap' }}>{ev.time}</span>
+            <span style={{ fontSize: '12px', color: '#9CA3AF', whiteSpace: 'nowrap' }}>{ev.timeLabel}</span>
           </div>
         ))}
       </div>
@@ -638,16 +661,109 @@ function EmailsTab({ emails }) {
   )
 }
 
+// ── Analytics tab ────────────────────────────────────────────────────────────
+
+function AnalyticsTab({ analytics }) {
+  const total = analytics?.totalVisits ?? 0
+
+  const funnelRows = [
+    { label: 'Total visits',       value: analytics?.totalVisits ?? 0, color: '#6B2FA0', emoji: '👀' },
+    { label: 'Stayed 20+ seconds', value: analytics?.stayed20s   ?? 0, color: '#8B5CF6', emoji: '⏱️' },
+    { label: 'Stayed 1+ minute',   value: analytics?.stayed60s   ?? 0, color: '#6366F1', emoji: '🔥' },
+    { label: 'Scrolled halfway',   value: analytics?.scrolled50  ?? 0, color: '#3B82F6', emoji: '📜' },
+    { label: 'Scrolled full page', value: analytics?.scrolled100 ?? 0, color: '#0EA5E9', emoji: '⭐' },
+  ]
+
+  const statCards = [
+    { label: 'Engagement Rate', value: `${analytics?.engagementRate ?? 0}%`, sub: 'stayed 20+ sec',    good: (analytics?.engagementRate ?? 0) > 40 },
+    { label: 'Deep Read Rate',  value: `${analytics?.deepScrollRate ?? 0}%`, sub: 'scrolled full page', good: (analytics?.deepScrollRate ?? 0) > 20 },
+    { label: '1-min Retained',  value: analytics?.stayed60s ?? 0,            sub: 'unique sessions',    good: (analytics?.stayed60s ?? 0) > 0 },
+  ]
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div>
+          <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.25rem', fontWeight: 700, color: '#0C0118', margin: 0 }}>
+            Website Analytics
+          </h2>
+          <p style={{ fontSize: '13px', color: '#9CA3AF', marginTop: '4px', marginBottom: 0 }}>
+            Visitors from QR scan · Last 24 hours
+          </p>
+        </div>
+        <span style={{
+          fontSize: '12px', fontWeight: 600, color: '#16A34A',
+          background: '#DCFCE7', padding: '5px 12px', borderRadius: '20px',
+        }}>
+          ● Live tracking active
+        </span>
+      </div>
+
+      {/* Funnel */}
+      <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid #F3F4F6', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', padding: '1.5rem' }}>
+        <div style={{ fontSize: '11px', fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '1.25rem' }}>
+          Engagement Funnel
+        </div>
+        {funnelRows.map((row) => {
+          const pct = total > 0 ? Math.round((row.value / total) * 100) : 0
+          return (
+            <div key={row.label} style={{ marginBottom: '1.1rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                <span style={{ fontSize: '13px', color: '#374151', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span>{row.emoji}</span>{row.label}
+                </span>
+                <span style={{ fontSize: '13px', fontWeight: 700, color: '#0C0118' }}>
+                  {row.value} <span style={{ fontWeight: 400, color: '#9CA3AF' }}>({pct}%)</span>
+                </span>
+              </div>
+              <div style={{ height: '8px', background: '#F3F4F6', borderRadius: '99px', overflow: 'hidden' }}>
+                <div style={{
+                  height: '100%', background: row.color, borderRadius: '99px',
+                  width: `${pct}%`, transition: 'width 700ms ease',
+                }} />
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Stat cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+        {statCards.map((card) => (
+          <div key={card.label} style={{ background: '#fff', borderRadius: '16px', border: '1px solid #F3F4F6', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', padding: '1.25rem' }}>
+            <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '2.25rem', fontWeight: 700, color: card.good ? '#0C0118' : '#D1D5DB', lineHeight: 1 }}>
+              {card.value}
+            </div>
+            <div style={{ fontSize: '12px', color: '#9CA3AF', marginTop: '4px' }}>{card.sub}</div>
+            <div style={{ fontSize: '12px', fontWeight: 600, color: '#374151', marginTop: '6px' }}>{card.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Empty state */}
+      {(!analytics || total === 0) && (
+        <div style={{ textAlign: 'center', padding: '3rem', color: '#9CA3AF' }}>
+          <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>📡</div>
+          <div style={{ fontSize: '14px', fontWeight: 600 }}>Waiting for visitors…</div>
+          <div style={{ fontSize: '12px', marginTop: '4px' }}>Share the QR code to start tracking</div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ── Dashboard shell ───────────────────────────────────────────────────────────
 
 const NAV_ITEMS = [
-  { id: 'overview', label: 'Overview',  Icon: IconOverview },
-  { id: 'orders',   label: 'Orders',    Icon: IconOrders   },
-  { id: 'surveys',  label: 'Surveys',   Icon: IconSurveys  },
-  { id: 'emails',   label: 'Emails',    Icon: IconEmails   },
+  { id: 'overview',   label: 'Overview',   Icon: IconOverview   },
+  { id: 'orders',     label: 'Orders',     Icon: IconOrders     },
+  { id: 'surveys',    label: 'Surveys',    Icon: IconSurveys    },
+  { id: 'emails',     label: 'Emails',     Icon: IconEmails     },
+  { id: 'analytics',  label: 'Analytics',  Icon: IconAnalytics  },
 ]
 
-const TAB_TITLES = { overview: 'Overview', orders: 'Orders', surveys: 'Surveys', emails: 'Emails' }
+const TAB_TITLES = { overview: 'Overview', orders: 'Orders', surveys: 'Surveys', emails: 'Emails', analytics: 'Analytics' }
 
 // ── Add Lead modal ────────────────────────────────────────────────────────────
 
@@ -760,9 +876,66 @@ function DashboardView({ onLogout }) {
   const [isLoading, setIsLoading] = useState(false)
   const [secondsSince, setSecondsSince] = useState(0)
   const [showAddLead, setShowAddLead]   = useState(false)
+  const [activeUsers, setActiveUsers]   = useState(0)
+  const [analytics, setAnalytics]       = useState(null)
+
+  async function fetchAnalytics() {
+    try {
+      const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+      const { data: events, error } = await supabase
+        .from('analytics_events')
+        .select('session_id, event_type, created_at')
+        .gte('created_at', since)
+      if (error) throw error
+      const allEvents = events || []
+      const uniqueSessions = new Set(allEvents.map(e => e.session_id))
+      const totalVisits = uniqueSessions.size
+      const sessionsWithEvent = (eventType) => {
+        const sessions = new Set(
+          allEvents.filter(e => e.event_type === eventType).map(e => e.session_id)
+        )
+        return sessions.size
+      }
+      const stayed20s   = sessionsWithEvent('time_20s')
+      const stayed60s   = sessionsWithEvent('time_60s')
+      const scrolled100 = sessionsWithEvent('scroll_100')
+      const scrolled75  = sessionsWithEvent('scroll_75')
+      const scrolled50  = sessionsWithEvent('scroll_50')
+      setAnalytics({
+        totalVisits,
+        stayed20s,
+        stayed60s,
+        scrolled50,
+        scrolled75,
+        scrolled100,
+        engagementRate: totalVisits > 0 ? Math.round((stayed20s / totalVisits) * 100) : 0,
+        deepScrollRate: totalVisits > 0 ? Math.round((scrolled100 / totalVisits) * 100) : 0,
+      })
+    } catch {
+      setAnalytics(null)
+    }
+  }
+
+  async function fetchActiveUsers() {
+    try {
+      const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000).toISOString()
+      const { data: rows, error } = await supabase
+        .from('analytics_events')
+        .select('session_id')
+        .eq('event_type', 'heartbeat')
+        .gte('created_at', twoMinutesAgo)
+      if (error) throw error
+      const unique = new Set((rows || []).map((r) => r.session_id))
+      setActiveUsers(unique.size)
+    } catch {
+      setActiveUsers(0)
+    }
+  }
 
   async function fetchDashboardData() {
     setIsLoading(true)
+    fetchActiveUsers()
+    fetchAnalytics()
     try {
       const [{ data: orders }, { data: leads }] = await Promise.all([
         supabase.from('expo_orders')
@@ -785,12 +958,14 @@ function DashboardView({ onLogout }) {
         total: '—',
         status: (o.status || 'CONFIRMED').toUpperCase(),
         time: fmt(o.created_at),
+        raw_created_at: o.created_at,
       }))
 
       const transformedEmails = (leads || []).map((l) => ({
         email: l.email,
         source: l.type === 'student' ? 'Survey' : l.type === 'investor' ? 'Interest' : 'Registration',
         time: fmt(l.created_at),
+        raw_created_at: l.created_at,
       }))
 
       const transformedSurveys = (leads || [])
@@ -816,12 +991,13 @@ function DashboardView({ onLogout }) {
     setIsLoading(false)
   }
 
-  // Auto-refresh every 30s + per-second ticker
+  // Auto-refresh every 30s + active-users every 15s + per-second ticker
   useEffect(() => {
     fetchDashboardData()
-    const refreshInterval = setInterval(fetchDashboardData, 30000)
+    const refreshInterval = setInterval(() => { fetchDashboardData(); fetchAnalytics() }, 30000)
+    const liveInterval    = setInterval(fetchActiveUsers, 15000)
     const tickerInterval  = setInterval(() => setSecondsSince((s) => s + 1), 1000)
-    return () => { clearInterval(refreshInterval); clearInterval(tickerInterval) }
+    return () => { clearInterval(refreshInterval); clearInterval(liveInterval); clearInterval(tickerInterval) }
   }, [])
 
   function switchTab(id) {
@@ -887,7 +1063,7 @@ function DashboardView({ onLogout }) {
         {/* Bottom badge */}
         <div style={{ padding: '1.25rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
           <div style={{ fontSize: '11px', color: '#4B5563', fontWeight: 500, letterSpacing: '0.04em' }}>
-            EXPO DAY 2025
+            EXPO DAY 2026
           </div>
           <div style={{ fontSize: '11px', color: '#374151', marginTop: '2px' }}>University of Tampa</div>
         </div>
@@ -1004,7 +1180,7 @@ function DashboardView({ onLogout }) {
                 })}
               </nav>
               <div style={{ padding: '1.25rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                <div style={{ fontSize: '11px', color: '#4B5563', fontWeight: 500 }}>EXPO DAY 2025</div>
+                <div style={{ fontSize: '11px', color: '#4B5563', fontWeight: 500 }}>EXPO DAY 2026</div>
               </div>
             </aside>
           </>
@@ -1035,14 +1211,15 @@ function DashboardView({ onLogout }) {
           <div style={{ opacity: fading ? 0 : 1, transition: 'opacity 120ms ease' }}>
             {tab === 'overview' && (isLoading
               ? <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: '1rem' }}>{[1,2,3,4].map((k) => <SkeletonCard key={k} />)}</div>
-              : <OverviewTab data={data} />
+              : <OverviewTab data={data} activeUsers={activeUsers} analytics={analytics} />
             )}
             {tab === 'orders' && (isLoading
               ? <div style={{ background: '#fff', borderRadius: '16px', overflow: 'hidden', border: '1px solid #F3F4F6' }}><table style={{ width: '100%', borderCollapse: 'collapse' }}><tbody>{[1,2,3].map((k) => <SkeletonRow key={k} />)}</tbody></table></div>
               : <OrdersTab orders={data.orders} />
             )}
-            {tab === 'surveys'  && <SurveysTab surveys={data.surveys} />}
-            {tab === 'emails'   && <EmailsTab emails={data.emails} />}
+            {tab === 'surveys'   && <SurveysTab surveys={data.surveys} />}
+            {tab === 'emails'    && <EmailsTab emails={data.emails} />}
+            {tab === 'analytics' && <AnalyticsTab analytics={analytics} />}
           </div>
         </main>
       </div>

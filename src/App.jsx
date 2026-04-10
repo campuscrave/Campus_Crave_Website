@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
+import { initAnalytics } from './lib/analytics'
 import ExpoDashboard from './pages/ExpoDashboard'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
@@ -28,6 +29,13 @@ export default function App() {
 
 function MarketingSite() {
   const [expoModalOpen, setExpoModalOpen] = useState(false)
+
+  useEffect(() => {
+    if (window.location.pathname === '/') {
+      const cleanup = initAnalytics()
+      return cleanup
+    }
+  }, [])
 
   useEffect(() => {
     sessionStorage.removeItem('cc_modal_dismissed')
