@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { initAnalytics } from './lib/analytics'
 import ExpoDashboard from './pages/ExpoDashboard'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
-import ExpoModal from './components/ExpoModal'
 import Hero from './sections/Hero'
 import Problem from './sections/Problem'
 import HowItWorks from './sections/HowItWorks'
@@ -27,45 +26,12 @@ export default function App() {
   )
 }
 
-class ExpoErrorBoundary extends React.Component {
-  constructor(props) { super(props); this.state = { hasError: false }; }
-  static getDerivedStateFromError() { return { hasError: true }; }
-  componentDidCatch(error, info) { console.error('ExpoModal crashed:', error, info); }
-  render() {
-    if (this.state.hasError) {
-      return <div style={{padding:'2rem',textAlign:'center',color:'#0C0118'}}>
-        <p>Something went wrong. Please refresh the page.</p>
-        <button onClick={() => window.location.reload()} style={{marginTop:'1rem',padding:'10px 20px',background:'#6B21A8',color:'white',border:'none',borderRadius:'8px',cursor:'pointer'}}>Refresh</button>
-      </div>;
-    }
-    return this.props.children;
-  }
-}
-
 function MarketingSite() {
-  const [expoModalOpen, setExpoModalOpen] = useState(false)
-
   useEffect(() => {
     if (window.location.pathname === '/') {
       const cleanup = initAnalytics()
       return cleanup
     }
-  }, [])
-
-  useEffect(() => {
-    setTimeout(() => setExpoModalOpen(true), 2500)
-
-    window.openExpoModal = () => setExpoModalOpen(true)
-
-    const handleHash = () => {
-      if (window.location.hash === '#order') {
-        setExpoModalOpen(true)
-        window.history.replaceState(null, '', window.location.pathname)
-      }
-    }
-    handleHash()
-    window.addEventListener('hashchange', handleHash)
-    return () => window.removeEventListener('hashchange', handleHash)
   }, [])
 
   return (
@@ -86,13 +52,6 @@ function MarketingSite() {
       </main>
       <Footer />
       <CraveAI />
-      <ExpoErrorBoundary>
-        <ExpoModal
-          isOpen={expoModalOpen}
-          onClose={() => setExpoModalOpen(false)}
-          onOrderComplete={() => setExpoModalOpen(false)}
-        />
-      </ExpoErrorBoundary>
     </>
   )
 }
