@@ -937,20 +937,26 @@ function DashboardView({ onLogout }) {
     fetchActiveUsers()
     fetchAnalytics()
     try {
-      const [{ data: orders }, { data: leads }] = await Promise.all([
+      const [ordersResult, leadsResult] = await Promise.all([
         supabase.from('expo_orders')
-          .select('order_number, lead_email, item_name, restaurant, status, created_at')
+          .select('*')
           .order('created_at', { ascending: false })
           .limit(50),
         supabase.from('expo_leads')
-          .select('email, type, first_name, q1_answer, q2_answer, q3_answer, created_at')
+          .select('*')
           .order('created_at', { ascending: false })
           .limit(100),
       ])
 
+      if (ordersResult.error) console.error('Orders fetch error:', ordersResult.error)
+      if (leadsResult.error)  console.error('Leads fetch error:',  leadsResult.error)
+
+      const orders = ordersResult.data || []
+      const leads  = leadsResult.data  || []
+
       const fmt = (ts) => new Date(ts).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
 
-      const transformedOrders = (orders || []).map((o) => ({
+      const transformedOrders = orders.map((o) => ({
         id: o.order_number || 'CC-???',
         student: o.lead_email || 'student@ut.edu',
         restaurant: o.restaurant || '—',
@@ -961,14 +967,14 @@ function DashboardView({ onLogout }) {
         raw_created_at: o.created_at,
       }))
 
-      const transformedEmails = (leads || []).map((l) => ({
+      const transformedEmails = leads.map((l) => ({
         email: l.email,
         source: l.type === 'student' ? 'Survey' : l.type === 'investor' ? 'Interest' : 'Registration',
         time: fmt(l.created_at),
         raw_created_at: l.created_at,
       }))
 
-      const transformedSurveys = (leads || [])
+      const transformedSurveys = leads
         .filter((l) => l.q1_answer || l.q2_answer || l.q3_answer)
         .map((l) => ({
           email: l.email,
@@ -986,7 +992,7 @@ function DashboardView({ onLogout }) {
       })
       setSecondsSince(0)
     } catch (err) {
-      console.error('Dashboard fetch error:', err)
+      console.error('Dashboard fetch error (unexpected):', err)
     }
     setIsLoading(false)
   }
@@ -994,7 +1000,7 @@ function DashboardView({ onLogout }) {
   // Auto-refresh every 30s + active-users every 15s + per-second ticker
   useEffect(() => {
     fetchDashboardData()
-    const refreshInterval = setInterval(() => { fetchDashboardData(); fetchAnalytics() }, 30000)
+    const refreshInterval = setInterval(fetchDashboardData, 30000)
     const liveInterval    = setInterval(fetchActiveUsers, 15000)
     const tickerInterval  = setInterval(() => setSecondsSince((s) => s + 1), 1000)
     return () => { clearInterval(refreshInterval); clearInterval(liveInterval); clearInterval(tickerInterval) }
