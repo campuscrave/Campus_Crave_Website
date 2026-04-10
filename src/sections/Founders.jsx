@@ -19,10 +19,10 @@ function Avatar({ name }) {
       </div>
     )
   }
-  // Felipe — placeholder
+  // Felipe
   return (
-    <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'linear-gradient(135deg, #6B21A8, #9333EA)', border: '3px solid #6B21A8', boxShadow: '0 0 0 4px rgba(107,33,168,0.15)', margin: '0 auto 16px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: '700', color: 'white', fontFamily: 'Outfit' }}>
-      FJ
+    <div style={{ width: '80px', height: '80px', borderRadius: '50%', overflow: 'hidden', border: '3px solid #6B21A8', margin: '0 auto 16px', boxShadow: '0 0 0 4px rgba(107,33,168,0.15)' }}>
+      <img src="/Felipe.jpeg" alt="Felipe Jaramillo" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} />
     </div>
   )
 }
@@ -48,11 +48,6 @@ export default function Founders() {
               <p style={{ fontSize: 13, color: '#8B5CF6', fontWeight: 500, marginTop: '0.25rem' }}>{role}</p>
               <p style={{ fontSize: 12, color: '#6B7280', marginTop: '0.25rem' }}>{university}</p>
               <p style={{ fontSize: 13, color: '#6B7280', marginTop: '0.75rem', lineHeight: 1.6 }}>{bio}</p>
-              {name === 'Felipe Jaramillo' && (
-                <p style={{ fontSize: '11px', color: '#9CA3AF', marginTop: '8px', fontStyle: 'italic' }}>
-                  Photo coming soon
-                </p>
-              )}
             </div>
           ))}
         </div>
