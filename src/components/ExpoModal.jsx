@@ -277,19 +277,21 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
     setSurveyError(null);
     setIsSaving(true);
     try {
-      if (window.__db && window.__db.createLead) {
-        const result = await window.__db.createLead(leadPayload);
-        if (result && result.error === 'duplicate') { setCurrentStep('already-ordered'); return false; }
-        if (result && result.leadId) {
-          setLeadId(result.leadId);
-        } else {
-          // createLead returned but gave no leadId — surface the error so the
-          // user can retry rather than proceeding with a null lead_id.
-          const msg = (result && result.error) ? result.error : 'unknown';
-          console.error('[CampusCrave] createLead failed:', msg);
-          setSurveyError('Could not save your info. Please try again.');
-          return false;
-        }
+      if (!window.__db || typeof window.__db.createLead !== 'function') {
+        setSurveyError('App not loaded correctly. Please refresh and try again.');
+        return false;
+      }
+      const result = await window.__db.createLead(leadPayload);
+      if (result && result.error === 'duplicate') { setCurrentStep('already-ordered'); return false; }
+      if (result && result.leadId) {
+        setLeadId(result.leadId);
+      } else {
+        // createLead returned but gave no leadId — surface the error so the
+        // user can retry rather than proceeding with a null lead_id.
+        const msg = (result && result.error) ? result.error : 'unknown';
+        console.error('[CampusCrave] createLead failed:', msg);
+        setSurveyError('Could not save your info. Please try again.');
+        return false;
       }
       return true;
     } catch (e) {
@@ -365,10 +367,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
           setSwipeErrMsg('Something went wrong. Tap to try again.');
         }
       } else {
-        // Demo: generate a CC-format order number
-        const fakeNum = String((Date.now() % 180) + 1).padStart(3, '0');
-        setOrderNumber(`CC-${fakeNum}`);
-        setCurrentStep('confirmation');
+        setSwipeErrMsg('Something went wrong. Please ask a CampusCrave team member for help.');
       }
     } catch (e) {
       console.error('[CampusCrave] createOrder threw:', e);
@@ -1046,6 +1045,10 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
                                 localStorage.setItem('cc_waitlist', JSON.stringify([...existing, waitlistEmail]));
                               }
                             } catch (_e) { /* ignore */ }
+                            if (window.__db && typeof window.__db.createLead === 'function') {
+                              window.__db.createLead({ type: 'waitlist', firstName: 'Waitlist', email: waitlistEmail })
+                                .catch((_e) => { /* fallback already saved to localStorage */ });
+                            }
                             setWaitlistDone(true);
                           }}
                           onMouseEnter={(e) => (e.currentTarget.style.background = '#5B1A9F')}

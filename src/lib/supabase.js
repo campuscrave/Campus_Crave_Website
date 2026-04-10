@@ -68,7 +68,15 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://YOUR_PROJECT.supabase.co'
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'YOUR_ANON_KEY'
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  global: {
+    fetch: (url, options = {}) => {
+      return fetch(url, { ...options, signal: AbortSignal.timeout(10000) })
+    }
+  },
+  db: { schema: 'public' },
+  auth: { persistSession: true, autoRefreshToken: true }
+})
 
 export async function submitExpoLead(leadData) {
   const { data, error } = await supabase

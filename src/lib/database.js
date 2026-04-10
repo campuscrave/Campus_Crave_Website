@@ -141,7 +141,14 @@ export async function createOrder({ leadId, leadEmail, itemName, restaurant }) {
       })
       .select('order_number')
       .single()
-    if (orderError) return { success: false, error: orderError.message }
+    if (orderError) {
+      try {
+        await supabase.rpc('increment_stock', { p_item_name: itemName })
+      } catch (compensateErr) {
+        console.error('[CampusCrave] increment_stock compensation failed:', compensateErr)
+      }
+      return { success: false, error: orderError.message }
+    }
 
     if (resolvedLeadId) {
       await supabase
@@ -167,7 +174,6 @@ export async function createOrder({ leadId, leadEmail, itemName, restaurant }) {
   lsSet(LS_STOCK, saved)
 
   const orders = lsGet(LS_ORDERS)
-  const orderNumber = `CC-${String(orders.length + 1).padStart(3, '0')}`
   const orderNumber = `CC-${String(orders.length + 1).padStart(3, '0')}`
   orders.push({ id: genId(), lead_id: leadId, lead_email: leadEmail, item_name: itemName, order_number: orderNumber, order_claimed: false, status: 'pending', created_at: new Date().toISOString() })
   lsSet(LS_ORDERS, orders)
