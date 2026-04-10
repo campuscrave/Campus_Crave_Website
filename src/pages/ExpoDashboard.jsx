@@ -554,26 +554,16 @@ function SurveysTab({ surveys }) {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
             <div>
-              <div style={{ fontSize: '11px', color: '#9CA3AF', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '3px' }}>Year</div>
+              <div style={{ fontSize: '11px', color: '#9CA3AF', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '3px' }}>Year in school</div>
               <div style={{ fontSize: '13px', color: '#374151' }}>{s.year}</div>
             </div>
             <div>
-              <div style={{ fontSize: '11px', color: '#9CA3AF', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '3px' }}>Meal Plan</div>
-              <div style={{ fontSize: '13px', color: '#374151' }}>{s.mealPlan}</div>
+              <div style={{ fontSize: '11px', color: '#9CA3AF', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '3px' }}>Would use CampusCrave</div>
+              <div style={{ fontSize: '13px', color: '#374151' }}>{s.wouldUse}</div>
             </div>
-            <div>
-              <div style={{ fontSize: '11px', color: '#9CA3AF', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '3px' }}>Would Use</div>
-              <span style={{
-                background: s.wouldUse ? '#DCFCE7' : '#FEE2E2',
-                color: s.wouldUse ? '#166534' : '#991B1B',
-                fontSize: '11px', fontWeight: 600, padding: '3px 10px', borderRadius: '20px',
-              }}>
-                {s.wouldUse ? 'Yes!' : 'No'}
-              </span>
-            </div>
-            <div>
-              <div style={{ fontSize: '11px', color: '#9CA3AF', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '3px' }}>Comment</div>
-              <div style={{ fontSize: '13px', color: '#6B7280', fontStyle: 'italic' }}>&ldquo;{s.comment}&rdquo;</div>
+            <div style={{ gridColumn: '1 / -1' }}>
+              <div style={{ fontSize: '11px', color: '#9CA3AF', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '3px' }}>Main frustration</div>
+              <div style={{ fontSize: '13px', color: '#6B7280', fontStyle: 'italic' }}>&ldquo;{s.frustration}&rdquo;</div>
             </div>
           </div>
         </div>
@@ -969,7 +959,8 @@ function DashboardView({ onLogout }) {
 
       const transformedEmails = leads.map((l) => ({
         email: l.email,
-        source: l.type === 'student' ? 'Survey' : l.type === 'investor' ? 'Interest' : 'Registration',
+        name: l.first_name || l.name || 'Unknown',
+        source: l.type === 'student' ? 'Student' : (l.type || 'Registration'),
         time: fmt(l.created_at),
         raw_created_at: l.created_at,
       }))
@@ -978,11 +969,12 @@ function DashboardView({ onLogout }) {
         .filter((l) => l.q1_answer || l.q2_answer || l.q3_answer)
         .map((l) => ({
           email: l.email,
-          year: l.q1_answer || '—',
-          mealPlan: l.q2_answer || '—',
-          wouldUse: !!(l.q3_answer),
-          comment: l.q3_answer || '—',
+          year: l.q1_answer || 'N/A',
+          frustration: l.q2_answer || 'N/A',
+          wouldUse: l.q3_answer || 'N/A',
+          orderNumber: l.order_number || null,
           time: fmt(l.created_at),
+          raw_created_at: l.created_at,
         }))
 
       setData({
