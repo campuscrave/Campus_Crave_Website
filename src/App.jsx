@@ -53,7 +53,6 @@ function MarketingSite() {
   }, [])
 
   useEffect(() => {
-    sessionStorage.removeItem('cc_modal_dismissed')
     setTimeout(() => setExpoModalOpen(true), 2500)
 
     window.openExpoModal = () => setExpoModalOpen(true)
@@ -90,14 +89,8 @@ function MarketingSite() {
       <ExpoErrorBoundary>
         <ExpoModal
           isOpen={expoModalOpen}
-          onClose={() => {
-            sessionStorage.setItem('cc_modal_dismissed', 'true')
-            setExpoModalOpen(false)
-          }}
-          onOrderComplete={() => {
-            sessionStorage.setItem('cc_modal_dismissed', 'true')
-            setExpoModalOpen(false)
-          }}
+          onClose={() => setExpoModalOpen(false)}
+          onOrderComplete={() => setExpoModalOpen(false)}
         />
       </ExpoErrorBoundary>
     </>

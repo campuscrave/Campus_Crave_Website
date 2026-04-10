@@ -167,6 +167,16 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
   const [surveyError, setSurveyError] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
 
+  // ── Offline detection ──
+  const [offline, setOffline] = useState(!navigator.onLine);
+  useEffect(() => {
+    const on = () => setOffline(false);
+    const off = () => setOffline(true);
+    window.addEventListener('online', on);
+    window.addEventListener('offline', off);
+    return () => { window.removeEventListener('online', on); window.removeEventListener('offline', off); };
+  }, []);
+
   // ── Reset state when modal opens (restore session progress if available) ──
   useEffect(() => {
     if (isOpen) {
@@ -542,12 +552,10 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
       <div
         onClick={(e) => {
           if (e.target === e.currentTarget) {
-            sessionStorage.setItem('cc_modal_dismissed', 'true');
             handleClose();
           }
         }}
         onWheel={(e) => e.stopPropagation()}
-        onTouchMove={(e) => e.stopPropagation()}
         style={{
           position: 'fixed',
           inset: 0,
@@ -606,6 +614,8 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
             </button>
           )}
 
+          {offline && <div style={{background:'#FEF2F2',color:'#DC2626',padding:'8px 16px',borderRadius:'8px',fontSize:'14px',textAlign:'center',margin:'8px 16px'}}>You're offline. Please check your connection.</div>}
+
           {/* ── STEP: reward ── */}
           {currentStep === 'reward' && (
             <div style={{padding:0,overflow:'hidden'}}>
@@ -616,7 +626,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
                 position:'relative',
               }}>
                 <button
-                  onClick={()=>{try{sessionStorage.removeItem('cc_survey_progress');}catch(_e){}sessionStorage.setItem('cc_modal_dismissed','true');onClose();}}
+                  onClick={()=>{try{sessionStorage.removeItem('cc_survey_progress');}catch(_e){}onClose();}}
                   style={{position:'absolute',top:12,right:12,width:44,height:44,borderRadius:'50%',background:'rgba(255,255,255,0.2)',border:'none',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',color:'white',fontSize:14,fontWeight:700}}
                 >✕</button>
                 <div style={{width:48,height:48,borderRadius:'50%',background:'#22C55E',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 0.75rem',fontSize:'1.5rem'}}>✓</div>
@@ -797,6 +807,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
                         type="email"
                         value={formData.email}
                         onChange={(e) => updateForm('email', e.target.value)}
+                        onBlur={(e) => updateForm('email', e.target.value.trim())}
                         onKeyDown={(e) => e.key === 'Enter' && handleStudentNext()}
                       />
                       {errors.email && <div style={s.errorMsg}>{errors.email}</div>}
@@ -890,6 +901,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
                         type="email"
                         value={formData.email}
                         onChange={(e) => updateForm('email', e.target.value)}
+                        onBlur={(e) => updateForm('email', e.target.value.trim())}
                         onKeyDown={(e) => e.key === 'Enter' && handleProfessorNext()}
                       />
                       {errors.email && <div style={s.errorMsg}>{errors.email}</div>}
@@ -983,6 +995,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
                         type="email"
                         value={formData.email}
                         onChange={(e) => updateForm('email', e.target.value)}
+                        onBlur={(e) => updateForm('email', e.target.value.trim())}
                         onKeyDown={(e) => e.key === 'Enter' && handleVisitorNext()}
                       />
                       {errors.email && <div style={s.errorMsg}>{errors.email}</div>}
