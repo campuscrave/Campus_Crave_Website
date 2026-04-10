@@ -12,8 +12,8 @@ export default function FoodItem({ item, selected, onSelect, soldOut }) {
         borderRadius: '16px',
         overflow: 'hidden',
         cursor: soldOut ? 'default' : 'pointer',
-        border: `2px solid ${selected ? '#6B21A8' : 'rgba(255,255,255,0.08)'}`,
-        background: 'rgba(255,255,255,0.04)',
+        border: `2px solid ${selected ? '#6B21A8' : '#E5E7EB'}`,
+        background: '#F9FAFB',
         padding: '1.25rem',
         transform: selected ? 'scale(1.02)' : 'scale(1)',
         transition: 'transform 150ms, box-shadow 150ms, border-color 150ms',
@@ -58,7 +58,7 @@ export default function FoodItem({ item, selected, onSelect, soldOut }) {
         style={{
           fontSize: '1.1rem',
           fontWeight: 600,
-          color: 'white',
+          color: '#0C0118',
           marginTop: '0.75rem',
           textAlign: 'center',
         }}
@@ -70,7 +70,7 @@ export default function FoodItem({ item, selected, onSelect, soldOut }) {
       <div
         style={{
           fontSize: '12px',
-          color: '#9CA3AF',
+          color: '#6B7280',
           textAlign: 'center',
           marginTop: '4px',
         }}

@@ -1,4 +1,4 @@
-import { supabase } from './supabase.js'
+import { supabase, supabaseOrder } from './supabase.js'
 
 const LS_LEADS  = 'cc_expo_leads'
 const LS_ORDERS = 'cc_expo_orders'
@@ -110,7 +110,7 @@ export async function getStockLevels() {
 
 export async function createOrder({ leadId, leadEmail, itemName, restaurant }) {
   if (supabase) {
-    const { data: rpcData, error: rpcError } = await supabase.rpc('decrement_stock', { p_item_name: itemName })
+    const { data: rpcData, error: rpcError } = await supabaseOrder.rpc('decrement_stock', { p_item_name: itemName })
     if (rpcError) return { success: false, error: rpcError.message }
     if (rpcData === -1) return { success: false, error: 'sold_out' }
 
@@ -120,7 +120,7 @@ export async function createOrder({ leadId, leadEmail, itemName, restaurant }) {
     // in a prior session and the in-memory leadId is stale/null.
     let resolvedLeadId = leadId
     if (!resolvedLeadId && leadEmail) {
-      const { data: leadRow } = await supabase
+      const { data: leadRow } = await supabaseOrder
         .from('expo_leads')
         .select('id')
         .eq('email', leadEmail.trim().toLowerCase())
@@ -129,7 +129,7 @@ export async function createOrder({ leadId, leadEmail, itemName, restaurant }) {
       resolvedLeadId = leadRow?.id ?? null
     }
 
-    const { data: orderData, error: orderError } = await supabase
+    const { data: orderData, error: orderError } = await supabaseOrder
       .from('expo_orders')
       .insert({
         lead_id: resolvedLeadId,
@@ -141,7 +141,7 @@ export async function createOrder({ leadId, leadEmail, itemName, restaurant }) {
       .single()
     if (orderError) {
       try {
-        await supabase.rpc('increment_stock', { p_item_name: itemName })
+        await supabaseOrder.rpc('increment_stock', { p_item_name: itemName })
       } catch (compensateErr) {
         console.error('[CampusCrave] increment_stock compensation failed:', compensateErr)
       }
@@ -150,7 +150,7 @@ export async function createOrder({ leadId, leadEmail, itemName, restaurant }) {
 
     if (resolvedLeadId) {
       try {
-        const { error: claimError } = await supabase
+        const { error: claimError } = await supabaseOrder
           .from('expo_leads')
           .update({ order_claimed: true })
           .eq('id', resolvedLeadId)

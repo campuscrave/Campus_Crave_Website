@@ -65,13 +65,34 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://YOUR_PROJECT.supabase.co'
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'YOUR_ANON_KEY'
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('FATAL: Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY');
+}
+
+const makeSignal = (ms) => {
+  if (typeof AbortSignal.timeout === 'function') return AbortSignal.timeout(ms);
+  const controller = new AbortController();
+  setTimeout(() => controller.abort(), ms);
+  return controller.signal;
+};
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   global: {
     fetch: (url, options = {}) => {
-      return fetch(url, { ...options, signal: AbortSignal.timeout(10000) })
+      return fetch(url, { ...options, signal: makeSignal(10000) })
+    }
+  },
+  db: { schema: 'public' },
+  auth: { persistSession: true, autoRefreshToken: true }
+})
+
+// Long-timeout client for createOrder (network-sensitive, needs 20s)
+export const supabaseOrder = createClient(supabaseUrl, supabaseAnonKey, {
+  global: {
+    fetch: (url, options = {}) => {
+      return fetch(url, { ...options, signal: makeSignal(20000) })
     }
   },
   db: { schema: 'public' },

@@ -77,7 +77,7 @@ const s = {
     border: '1.5px solid #E5E7EB',
     background: '#F9FAFB',
     color: '#0C0118',
-    fontSize: '0.9rem',
+    fontSize: '16px',
     outline: 'none',
     fontFamily: "'Plus Jakarta Sans', sans-serif",
     boxSizing: 'border-box',
@@ -175,8 +175,12 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
         const saved = sessionStorage.getItem('cc_survey_progress');
         if (saved) {
           const progress = JSON.parse(saved);
-          if (progress.currentStep && progress.currentStep !== 'confirmation') {
-            setCurrentStep(progress.currentStep);
+          const UNSAFE_STEPS = ['ordering', 'swipe', 'confirmation'];
+          const restoredStep = UNSAFE_STEPS.includes(progress.currentStep)
+            ? (progress.userType === 'student' ? 'student-questions' : progress.userType === 'professor' ? 'professor-questions' : progress.userType === 'visitor' ? 'visitor-questions' : 'welcome')
+            : progress.currentStep;
+          if (restoredStep && restoredStep !== 'confirmation') {
+            setCurrentStep(restoredStep);
             setFormData((prev) => ({ ...prev, ...progress.formData }));
             setUserType(progress.userType ?? null);
             restored = true;
@@ -214,9 +218,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
           : FOOD_ITEMS.map((item) => ({ item_name: item.name, remaining_stock: 90, is_active: true }));
         setStockLevels(levels);
       } catch (_e) {
-        setStockLevels(
-          FOOD_ITEMS.map((item) => ({ item_name: item.name, remaining_stock: 90, is_active: true })),
-        );
+        setStockLevels([]);
       } finally {
         setLoadingStock(false);
       }
@@ -302,6 +304,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
   const saveLeadAndAdvance = async (leadPayload) => {
     setSurveyError(null);
     setIsSaving(true);
+    const safetyTimeout = setTimeout(() => { setIsSaving(false); }, 15000);
     try {
       if (!window.__db || typeof window.__db.createLead !== 'function') {
         setSurveyError('App not loaded correctly. Please refresh and try again.');
@@ -325,6 +328,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
       setSurveyError('Network error — please check your connection and try again.');
       return false;
     } finally {
+      clearTimeout(safetyTimeout);
       setIsSaving(false);
     }
   };
@@ -398,6 +402,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
           restaurant: selectedItem.restaurant,
         });
         if (result && result.error === 'sold_out') {
+          setSwipeKey((k) => k + 1);
           setOrderError('sold_out');
           setCurrentStep('ordering');
         } else if (result && result.orderNumber) {
@@ -407,13 +412,16 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
           const errDetail = result && result.error ? result.error : 'unknown';
           console.error('[CampusCrave] createOrder failed:', errDetail);
           setSwipeErrMsg('Something went wrong. Tap to try again.');
+          setSwipeKey((k) => k + 1);
         }
       } else {
         setSwipeErrMsg('Something went wrong. Please ask a CampusCrave team member for help.');
+        setSwipeKey((k) => k + 1);
       }
     } catch (e) {
       console.error('[CampusCrave] createOrder threw:', e);
       setSwipeErrMsg('Something went wrong. Tap to try again.');
+      setSwipeKey((k) => k + 1);
     } finally {
       setSwipeLoading(false);
     }
@@ -512,7 +520,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
 
   const handleClose = () => {
     if (hasStartedSurvey) {
-      if (window.confirm('¿Seguro que quieres salir? Perderás tu progreso.')) {
+      if (window.confirm('Are you sure you want to leave? You\'ll lose your progress.')) {
         try { sessionStorage.removeItem('cc_survey_progress'); } catch (_e) { /* ignore */ }
         onClose();
       }
@@ -563,7 +571,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
             position: 'relative',
             boxShadow: '0 25px 60px rgba(0,0,0,0.3)',
             fontFamily: "'Plus Jakarta Sans', sans-serif",
-            maxHeight: '90vh',
+            maxHeight: 'min(90dvh, 90vh)',
             display: 'flex',
             flexDirection: 'column',
           }}
@@ -577,8 +585,8 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
                 top: '12px',
                 right: '12px',
                 zIndex: 20,
-                width: '32px',
-                height: '32px',
+                width: '44px',
+                height: '44px',
                 borderRadius: '50%',
                 background: 'rgba(0,0,0,0.08)',
                 border: 'none',
@@ -609,7 +617,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
               }}>
                 <button
                   onClick={()=>{try{sessionStorage.removeItem('cc_survey_progress');}catch(_e){}sessionStorage.setItem('cc_modal_dismissed','true');onClose();}}
-                  style={{position:'absolute',top:12,right:12,width:28,height:28,borderRadius:'50%',background:'rgba(255,255,255,0.2)',border:'none',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',color:'white',fontSize:14,fontWeight:700}}
+                  style={{position:'absolute',top:12,right:12,width:44,height:44,borderRadius:'50%',background:'rgba(255,255,255,0.2)',border:'none',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',color:'white',fontSize:14,fontWeight:700}}
                 >✕</button>
                 <div style={{width:48,height:48,borderRadius:'50%',background:'#22C55E',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 0.75rem',fontSize:'1.5rem'}}>✓</div>
                 <div style={{fontSize:'1.5rem',fontWeight:800,color:'white',letterSpacing:'-0.02em',fontFamily:'Outfit,sans-serif'}}>Your Reward Awaits ✦</div>
@@ -824,7 +832,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
                             <button
                               key={opt}
                               onClick={() => updateForm(key, opt)}
-                              style={{ ...s.optionBtn(formData[key] === opt), padding: '6px 10px', fontSize: '12px', textAlign: 'center' }}
+                              style={{ ...s.optionBtn(formData[key] === opt), padding: '10px 14px', fontSize: '14px', textAlign: 'center' }}
                             >
                               {opt}
                             </button>
@@ -917,7 +925,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
                             <button
                               key={opt}
                               onClick={() => updateForm(key, opt)}
-                              style={{ ...s.optionBtn(formData[key] === opt), padding: '6px 10px', fontSize: '12px', textAlign: 'center' }}
+                              style={{ ...s.optionBtn(formData[key] === opt), padding: '10px 14px', fontSize: '14px', textAlign: 'center' }}
                             >
                               {opt}
                             </button>
@@ -1010,7 +1018,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
                             <button
                               key={opt}
                               onClick={() => onChange ? onChange(opt) : updateForm(key, opt)}
-                              style={{ ...s.optionBtn(formData[key] === opt), padding: '6px 10px', fontSize: '12px', textAlign: 'center' }}
+                              style={{ ...s.optionBtn(formData[key] === opt), padding: '10px 14px', fontSize: '14px', textAlign: 'center' }}
                             >
                               {opt}
                             </button>
@@ -1114,7 +1122,7 @@ export default function ExpoModal({ isOpen, onClose, onOrderComplete }) {
                           padding: '0.75rem 1rem',
                           marginBottom: '1rem',
                           fontSize: '13px',
-                          color: '#FCA5A5',
+                          color: '#DC2626',
                         }}>
                           Sorry, that item just sold out. Please choose another.
                         </div>
