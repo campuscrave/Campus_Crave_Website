@@ -50,10 +50,8 @@ export async function createLead({ type, firstName, fullName, email, role, q1, q
 
   const baseData = {
     type,
-    first_name: firstName,
-    full_name: fullName,
+    first_name: firstName || fullName,
     email: normalizedEmail,
-    role,
   }
   const payload = buildLeadPayload(baseData, q1, q2, q3)
 
