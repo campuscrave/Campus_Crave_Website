@@ -35,7 +35,18 @@ export async function createLead({ type, firstName, fullName, email, role, q1, q
   if (!email) return { success: false, error: 'missing_email' }
   const normalizedEmail = email.trim().toLowerCase()
   const exists = await checkEmailExists(normalizedEmail)
-  if (exists) return { success: false, error: 'duplicate' }
+  if (exists) {
+    if (supabase) {
+      const { data: existing } = await supabase
+        .from('expo_leads')
+        .select('id')
+        .eq('email', normalizedEmail)
+        .limit(1)
+        .single()
+      if (existing?.id) return { success: true, leadId: existing.id }
+    }
+    return { success: false, error: 'duplicate' }
+  }
 
   const baseData = {
     type,
@@ -53,7 +64,19 @@ export async function createLead({ type, firstName, fullName, email, role, q1, q
       .select('id')
       .single()
     if (error) {
-      if (error.code === '23505') return { success: false, error: 'duplicate' }
+      const isDuplicate =
+        error.code === '23505' ||
+        error.message?.toLowerCase().includes('duplicate') ||
+        error.message?.toLowerCase().includes('unique')
+      if (isDuplicate) {
+        const { data: existing } = await supabase
+          .from('expo_leads')
+          .select('id')
+          .eq('email', normalizedEmail)
+          .limit(1)
+          .single()
+        if (existing?.id) return { success: true, leadId: existing.id }
+      }
       return { success: false, error: error.message }
     }
     return { success: true, leadId: data.id }
