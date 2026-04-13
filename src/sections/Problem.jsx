@@ -6,8 +6,8 @@ const cards = [
     statColor: '#10B981',
     borderColor: 'rgba(16,185,129,0.15)',
     label: 'Total Addressable Market in U.S. campus dining & food spend',
-    title: 'Massive Untapped Market',
-    desc: 'Over 20 million college students across 4,000+ U.S. universities spend an average of $330/semester on meal plans — a largely locked, underserved market with no dominant mobile ordering platform.',
+    title: 'Meal plans trapped on campus',
+    desc: 'Students pay hundreds in dining dollars each semester — but those balances only work at a handful of on-campus locations. The moment they step off campus, that money is useless.',
   },
   {
     emoji: '💳',
@@ -16,8 +16,8 @@ const cards = [
     statColor: '#FBBF24',
     borderColor: 'rgba(245,158,11,0.2)',
     label: 'average extra spent on delivery apps per semester',
-    title: 'Paying Twice',
-    desc: 'Students drain their personal cards on Uber Eats and DoorDash while their campus balance sits unused.',
+    title: 'Off-campus spending has no home',
+    desc: 'Students already spend freely at off-campus restaurants, but through fragmented apps with no connection to their university account. That spend is invisible to institutions and inconvenient for students.',
   },
   {
     emoji: '📱',
@@ -26,8 +26,8 @@ const cards = [
     statColor: '#8B5CF6',
     borderColor: 'rgba(107,33,168,0.2)',
     label: 'apps that integrate campus meal plans with off-campus ordering',
-    title: 'No Unified Platform',
-    desc: 'Until now. CampusCrave is the first platform built for campus dining — not bolted on top of it.',
+    title: 'No unified platform exists',
+    desc: 'There is no single place where students can manage their meal plan balance, discover local restaurants, and pay — all in one flow. CampusCrave centralizes every dollar a student spends on food.',
   },
 ]
 

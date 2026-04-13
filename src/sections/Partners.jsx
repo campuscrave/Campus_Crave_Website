@@ -42,7 +42,7 @@ export default function Partners() {
         </div>
 
         <p style={{ marginTop: '2.5rem', fontSize: 12, color: '#9CA3AF', textAlign: 'center', fontStyle: 'italic' }}>
-          Pilot launch at University of Tampa · Operated by Ciccio Restaurant Group (CRG)
+          Pilot Launch · Coming Soon · Operated by Ciccio Restaurant Group (CRG)
         </p>
       </div>
     </section>

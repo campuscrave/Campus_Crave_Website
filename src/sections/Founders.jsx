@@ -1,7 +1,7 @@
 const team = [
-  { name: 'Juan Pablo',      role: 'CEO', university: 'Knox College',        bio: 'CS & Econometrics double major. Building the platform end to end.' },
-  { name: 'Matias Gil',      role: 'COO', university: 'University of Tampa', bio: 'Cyber Security & Entrepreneurship double major. Wiring the institutions.' },
-  { name: 'Felipe Jaramillo', role: 'CFO', university: 'Duke University',    bio: 'Financial Engineering at Duke. Making the numbers work.' },
+  { name: 'Matias Gil',       role: 'CEO', university: 'University of Tampa', bio: 'Leads strategy, partnerships, and on-the-ground operations.' },
+  { name: 'Juan Pablo',       role: 'CTO', university: 'Knox College',        bio: 'Leads product architecture, platform development, and technical execution.' },
+  { name: 'Felipe Jaramillo', role: 'CFO', university: 'Duke University',     bio: 'Leads financial strategy, modeling, and investor relations.' },
 ]
 
 function Avatar({ name }) {
