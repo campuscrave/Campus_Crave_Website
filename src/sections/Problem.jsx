@@ -41,11 +41,12 @@ export default function Problem() {
         <h2 style={{
           fontSize: 'clamp(1.75rem, 3vw, 2.5rem)', fontWeight: 700, color: '#0C0118',
         }}>
-          Students pay for meal plans they can't use.
+          Meal plans were built for one campus. Students eat everywhere.
         </h2>
         <p style={{ color: '#6B7280', maxWidth: 560, marginTop: '0.75rem', lineHeight: 1.6 }}>
-          Every semester, millions in campus dining funds go unspent — not because students don't
-          want food, but because the system doesn't let them get it.
+          Hundreds of dollars in student food spending leave campus every semester — scattered across
+          delivery apps, invisible to universities, and disconnected from dining plans. CampusCrave
+          centralizes every food dollar, on-campus and off, into one platform.
         </p>
 
         {/* Cards */}
