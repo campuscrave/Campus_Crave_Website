@@ -39,7 +39,7 @@ export default function Footer() {
         {/* Copyright */}
         <div className="md:text-right">
           <p className="font-body text-[13px] text-white/30 leading-[1.6]">
-            &copy; 2026 CampusCrave Inc.<br />
+            &copy; 2026 CampusCrave Corp.<br />
             All rights reserved.
           </p>
           <p className="font-body text-[13px] text-white/20 mt-2">

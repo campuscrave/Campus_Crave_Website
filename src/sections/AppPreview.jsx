@@ -68,7 +68,7 @@ export default function AppPreview() {
             Let&apos;s talk →
           </a>
           <p className="mt-3 text-xs" style={{ color: '#6B7280' }}>
-            Currently accepting applications from CRG and independent restaurants within 1.4mi of campus
+            Currently accepting applications from independent restaurants within 1.4mi of campus
           </p>
         </div>
       </div>

@@ -6,8 +6,8 @@ const cards = [
     statColor: '#10B981',
     borderColor: 'rgba(16,185,129,0.15)',
     label: 'Total Addressable Market in U.S. campus dining & food spend',
-    title: 'Meal plans trapped on campus',
-    desc: 'Students pay hundreds in dining dollars each semester — but those balances only work at a handful of on-campus locations. The moment they step off campus, that money is useless.',
+    title: 'Meal plans need to travel further',
+    desc: "Students' dining dollars are trapped inside campus walls. Expanding their reach to off-campus restaurants doesn't replace existing spending — it multiplies what a meal plan can do.",
   },
   {
     emoji: '💳',
@@ -16,8 +16,8 @@ const cards = [
     statColor: '#FBBF24',
     borderColor: 'rgba(245,158,11,0.2)',
     label: 'average extra spent on delivery apps per semester',
-    title: 'Off-campus spending has no home',
-    desc: 'Students already spend freely at off-campus restaurants, but through fragmented apps with no connection to their university account. That spend is invisible to institutions and inconvenient for students.',
+    title: 'Off-campus spend is fragmented',
+    desc: 'Students split food purchases across Uber Eats, DoorDash, and dozens of local apps. Every dollar spent externally is invisible to the university — a missed opportunity to add real value.',
   },
   {
     emoji: '📱',
@@ -26,8 +26,8 @@ const cards = [
     statColor: '#8B5CF6',
     borderColor: 'rgba(107,33,168,0.2)',
     label: 'apps that integrate campus meal plans with off-campus ordering',
-    title: 'No unified platform exists',
-    desc: 'There is no single place where students can manage their meal plan balance, discover local restaurants, and pay — all in one flow. CampusCrave centralizes every dollar a student spends on food.',
+    title: 'One platform. Every dollar.',
+    desc: 'CampusCrave brings every student food transaction — on-campus and off — into a single, university-connected platform. Students get convenience. Universities get full visibility.',
   },
 ]
 

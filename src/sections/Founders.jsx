@@ -36,7 +36,7 @@ export default function Founders() {
           Built by students, for students.
         </h2>
         <p style={{ color: '#6B7280', marginTop: '0.75rem' }}>
-          We experienced the campus dining problem firsthand at the University of Tampa.
+          We experienced the campus dining problem firsthand.
           CampusCrave is our answer.
         </p>
 

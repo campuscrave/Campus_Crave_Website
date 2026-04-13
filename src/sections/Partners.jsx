@@ -17,7 +17,7 @@ export default function Partners() {
         </h2>
         <p style={{ color: '#6B7280', maxWidth: 600, margin: '0.75rem auto 0', fontSize: '1rem' }}>
           The Ciccio Restaurant Group runs Tampa's most beloved campus-area dining spots.
-          CampusCrave launches exclusively with CRG — built on trust and proximity.
+          CampusCrave is launching with CRG — built on trust and proximity.
         </p>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-12">
@@ -42,7 +42,7 @@ export default function Partners() {
         </div>
 
         <p style={{ marginTop: '2.5rem', fontSize: 12, color: '#9CA3AF', textAlign: 'center', fontStyle: 'italic' }}>
-          Pilot Launch · Coming Soon · Operated by Ciccio Restaurant Group (CRG)
+          Pilot Launch · Coming Soon
         </p>
       </div>
     </section>

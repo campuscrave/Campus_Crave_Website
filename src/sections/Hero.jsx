@@ -77,8 +77,6 @@ export default function Hero() {
           {/* Trust metrics */}
           <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', marginTop: '2rem', justifyContent: 'center' }}>
             {[
-              '5 CRG restaurant partners',
-              'University of Tampa Pilot',
               '$0 student fees at launch',
             ].map(text => (
               <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

@@ -9,9 +9,9 @@ const benefits = [
 
 
 const stats = [
-  { value: '60 days', label: 'to pilot launch', color: '#8B5CF6' },
+  { value: 'TBD', label: 'pilot launch date', color: '#8B5CF6' },
   { value: '$0', label: 'upfront cost to university', color: '#4ADE80' },
-  { value: '5', label: 'CRG restaurants at launch', color: '#8B5CF6' },
+  { value: '5', label: 'restaurants at launch', color: '#8B5CF6' },
   { value: '1,400+', label: 'students in campus radius', color: '#FBB924' },
 ]
 
