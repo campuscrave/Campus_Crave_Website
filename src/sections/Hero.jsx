@@ -32,10 +32,10 @@ export default function Hero() {
               borderRadius: 20, padding: '0.5rem 1rem', fontSize: 13,
             }}>
               <span style={{
-                width: 8, height: 8, borderRadius: '50%', background: '#4ADE80',
-                flexShrink: 0, animation: 'pulse-soft 2s ease-in-out infinite',
+                width: 8, height: 8, borderRadius: '50%', background: '#6B21A8',
+                flexShrink: 0,
               }} />
-              <span style={{ color: '#6B21A8' }}>🔴 Live Pilot · University of Tampa</span>
+              <span style={{ color: '#6B21A8' }}>University of Tampa · Pilot Coming Soon</span>
             </div>
           </div>
 

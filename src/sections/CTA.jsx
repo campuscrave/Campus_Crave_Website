@@ -63,7 +63,7 @@ export default function CTA() {
         </div>
 
         <p style={{ marginTop: '2rem', fontSize: 12, color: '#6B7280' }}>
-          University of Tampa pilot · Spring 2026 · hello@campus-crave.com
+          University of Tampa pilot · hello@campus-crave.com
         </p>
       </div>
     </section>

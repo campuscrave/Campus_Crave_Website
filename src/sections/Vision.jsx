@@ -6,11 +6,11 @@ const phases = [
     statusBg: 'rgba(74,222,128,0.15)',
     title: 'UT Tampa Pilot',
     items: [
-      'Live at University of Tampa with 5 CRG restaurant partners',
+      'Starting at University of Tampa with CRG restaurant partners',
       'Students use Spartan Dollars off-campus for the first time',
       'Pickup ordering with Dining Dollar integration',
     ],
-    timeline: 'Spring 2026',
+    timeline: 'TBD',
     active: true,
   },
   {
@@ -24,7 +24,7 @@ const phases = [
       'Delivery layer added',
       'Targeting 10 universities',
     ],
-    timeline: 'Q3 2026',
+    timeline: 'TBD',
     active: false,
   },
   {
@@ -38,7 +38,7 @@ const phases = [
       'Integrations with Sodexo, Aramark, and Transact dining systems',
       '200+ U.S. campuses',
     ],
-    timeline: '2027',
+    timeline: 'TBD',
     active: false,
   },
   {
