@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { initAnalytics } from './lib/analytics'
 import ExpoDashboard from './pages/ExpoDashboard'
+import PitchPage from './pages/PitchPage'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Hero from './sections/Hero'
@@ -21,6 +22,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/expo/dashboard" element={<ExpoDashboard />} />
+      <Route path="/pitch" element={<PitchPage />} />
       <Route path="*" element={<MarketingSite />} />
     </Routes>
   )
