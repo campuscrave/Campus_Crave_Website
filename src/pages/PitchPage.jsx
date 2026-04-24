@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import './pitch.css'
+import SwipeButton from '../components/SwipeButton'
 
 /**
  * /pitch — CampusCrave interactive investor demo.
@@ -21,39 +22,32 @@ const PAGES = ['splash', 'login', 'home', 'rest', 'cart', 'track', 'ready']
 
 const DISHES = [
   {
-    id: 'locos-nachos',
-    name: 'Locos Nachos',
-    desc: 'Seasoned chips, queso blanco, guacamole, jalapeño, cilantro, sour cream, pico de gallo, black bean purée.',
-    price: 10.00,
-    tag: "CHEF'S PICK",
-    img: 'https://static.wixstatic.com/media/c3bfad_8574ab0000134bfb976634c3325cca85~mv2.jpg',
+    id: 'choc-chip-cookies',
+    name: 'Chocolate Chip Cookies',
+    desc: 'Warm, freshly baked. Crisp edges, gooey center. Four to a bag.',
+    price: 2.50,
+    tag: "CAMPUS FAVORITE",
+    img: 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=800&q=85',
     featured: true,
   },
   {
-    id: 'chicken-brussels',
-    name: 'Chicken & Brussels',
-    desc: 'Grilled chicken, crispy brussels, shredded carrot, grilled onion, bacon bits, lime caesar, cotija.',
-    price: 17.00,
-    img: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=800&q=85',
+    id: 'brownies',
+    name: 'Brownies',
+    desc: 'Rich dark chocolate, fudgy center, crinkled top. Baked in-house every morning.',
+    price: 3.50,
+    img: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=800&q=85',
   },
   {
-    id: 'guacamole',
-    name: 'Guacamole',
-    desc: 'Fresh made to order, gluten free.',
-    price: 12.00,
-    img: 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=800&q=85',
-  },
-  {
-    id: 'trio-dip',
-    name: 'Trio Dip',
-    desc: 'Guacamole, queso blanco, lime salsa. Served with fresh tortilla chips.',
-    price: 14.00,
-    img: 'https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?w=800&q=85',
+    id: 'bottled-water',
+    name: 'Bottled Water',
+    desc: 'Chilled 16.9 oz spring water. Grab and go between classes.',
+    price: 1.75,
+    img: 'https://images.unsplash.com/photo-1560847468-5eef0b55c2bc?w=800&q=85',
   },
 ]
 
-const COVER_IMG = 'https://static.wixstatic.com/media/c3bfad_7dad66631dd54b77ae4d3357ea51c655~mv2.jpg'
-const REST_HERO_IMG = 'https://static.wixstatic.com/media/c3bfad_238ad7d0591d4bdcb65a6fdec3d02b2b~mv2.jpg'
+const COVER_IMG = 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=1200&q=85'
+const REST_HERO_IMG = 'https://images.unsplash.com/photo-1521017432531-fbd92d768814?w=1200&q=85'
 
 const TIMER_SECONDS = 360
 const TIMER_CIRC = 2 * Math.PI * 110 // ≈ 691
@@ -63,7 +57,7 @@ export default function PitchPage() {
   const [cart, setCart] = useState([]) // [{id, qty}]
   const [remain, setRemain] = useState(TIMER_SECONDS)
   const [clock, setClock] = useState(() => formatClock())
-  const [menuTab, setMenuTab] = useState('Signature')
+  const [menuTab, setMenuTab] = useState('Popular')
   const [isFullscreen, setIsFullscreen] = useState(false)
 
   const phoneRef = useRef(null)
@@ -137,7 +131,7 @@ export default function PitchPage() {
     return stopTimer
   }, [page])
 
-  // Phone tilt parallax
+  // Phone tilt parallax (scale kept in sync with .phone initial transform so size stays fixed)
   useEffect(() => {
     const right = rightRef.current
     const phone = phoneRef.current
@@ -147,7 +141,7 @@ export default function PitchPage() {
       const x = ((e.clientX - r.left) / r.width) - 0.5
       const y = ((e.clientY - r.top) / r.height) - 0.5
       phone.style.transform =
-        `rotateY(${-12 + x * 10}deg) rotateX(${4 - y * 8}deg) rotateZ(${-1.5 + x * 2}deg)`
+        `rotateY(${-12 + x * 10}deg) rotateX(${4 - y * 8}deg) rotateZ(${-1.5 + x * 2}deg) scale(var(--phone-scale, 0.78))`
     }
     const onLeave = () => { phone.style.transform = '' }
     right.addEventListener('mousemove', onMove)
@@ -193,8 +187,9 @@ export default function PitchPage() {
   useEffect(() => {
     if (page === 'cart' && cart.length === 0) {
       setCart([
-        { id: 'locos-nachos', qty: 1 },
-        { id: 'chicken-brussels', qty: 1 },
+        { id: 'choc-chip-cookies', qty: 4 },
+        { id: 'brownies', qty: 3 },
+        { id: 'bottled-water', qty: 1 },
       ])
     }
   }, [page]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -226,12 +221,10 @@ export default function PitchPage() {
             <div className="icon"><img src="/APP logo.jpeg" alt="" /></div>
             <div className="wm">CAMPUS<span>•</span>CRAVE</div>
           </div>
-          <div className="nav">
-            <a>Product</a><a>Pilot</a><a>Team</a><a>Ask</a>
-          </div>
           <div className="meta">
             <div className="live"><span className="dot" />LIVE DEMO</div>
-            <div>UNIVERSITY OF TAMPA · FALL 2026 PILOT</div>
+            <div>UNIVERSITY TAMPA</div>
+            <div>FALL 2026 PILOT</div>
             <button
               className="fs-btn"
               onClick={(e) => { e.stopPropagation(); toggleFullscreen() }}
@@ -253,44 +246,7 @@ export default function PitchPage() {
 
         {/* HERO */}
         <div className="hero">
-          {/* LEFT */}
-          <div className="left">
-            <div className="eyebrow">
-              <span className="tag">★</span> PITCH · INTERACTIVE DEMO
-            </div>
-            <h1 className="display">
-              Campus dining,<br />finally <em>on tap.</em>
-            </h1>
-            <p className="lede">
-              <strong>CampusCrave</strong> lets students use their meal plan at local
-              restaurants. Order, track pickup, and skip the line — all in one flow.
-              Built for campus life. Launching at the University of Tampa.
-            </p>
-
-            <div className="cta-row">
-              <button className="btn-primary" onClick={() => goto('login')}>
-                Launch Interactive Demo
-                <span className="arr">↗</span>
-              </button>
-              <span className="btn-ghost">
-                or press <span className="kb">SPACE</span> to advance
-              </span>
-            </div>
-
-            <div className="status-rail">
-              <div className="srow">
-                <span className="d g" />Pilot · <b>&nbsp;University of Tampa — Fall 2026</b>
-              </div>
-              <div className="srow">
-                <span className="d" />One checkout · <b>&nbsp;Dining Dollars + Crave Dollars</b>
-              </div>
-              <div className="srow">
-                <span className="d y" />Pickup-first · <b>&nbsp;zero delivery fees for students</b>
-              </div>
-            </div>
-          </div>
-
-          {/* RIGHT — PHONE */}
+          {/* PHONE */}
           <div className="right" ref={rightRef}>
             <div className="phone-scene">
               <div className="glow-floor" />
@@ -370,22 +326,22 @@ export default function PitchPage() {
                         </div>
                         <div className="search">
                           <svg className="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4"><circle cx="7" cy="7" r="4.5" /><path d="M10.5 10.5L14 14" /></svg>
-                          Search tacos, bowls, margaritas...
+                          Search cookies, coffee, snacks...
                         </div>
 
                         <div className="hero-card">
-                          <div className="lbl">★ STUDENT DEAL · GREEN LEMON</div>
+                          <div className="lbl">★ STUDENT DEAL · CAMPUS CRAVE CAFÉ</div>
                           <div className="tt">5% off, <em>every order.</em></div>
                           <div className="pill">Tap to apply →</div>
                         </div>
 
                         <div className="cats">
                           <div className="cat on">🔥 All</div>
-                          <div className="cat">🌮 Tacos</div>
-                          <div className="cat">🥗 Bowls</div>
-                          <div className="cat">🍔 Burgers</div>
+                          <div className="cat">🍪 Bakery</div>
                           <div className="cat">☕ Coffee</div>
-                          <div className="cat">🍨 Ice</div>
+                          <div className="cat">🥗 Bowls</div>
+                          <div className="cat">🌮 Tacos</div>
+                          <div className="cat">🍔 Burgers</div>
                         </div>
 
                         <div className="section-h">
@@ -395,22 +351,22 @@ export default function PitchPage() {
 
                         <div className="rest-card" onClick={() => goto('rest')}>
                           <div className="pic" style={{ backgroundImage: `url("${COVER_IMG}")` }}>
-                            <div className="badge"><span className="live-dot" />OPEN · 10–20 MIN</div>
+                            <div className="badge"><span className="live-dot" />OPEN · 5–10 MIN</div>
                             <div className="fav">
                               <svg className="ico" viewBox="0 0 16 16" fill="#fff"><path d="M8 14S2 10 2 5.5 5 1 8 3.5 14 1 14 5.5 8 14 8 14z" /></svg>
                             </div>
                           </div>
                           <div className="info">
                             <div className="rname">
-                              <h4>Green Lemon</h4>
-                              <div className="star">★ 4.8 · 2,340</div>
+                              <h4>Campus Crave Café</h4>
+                              <div className="star">★ 4.9 · 1,284</div>
                             </div>
                             <div className="meta-line">
-                              <span>Tacos · Fiesta Bowls · Margaritas</span>
+                              <span>Bakery · Coffee · Snacks</span>
                               <span className="dot">·</span>
-                              <span>$$</span>
+                              <span>$</span>
                               <span className="dot">·</span>
-                              <span>1.2 mi</span>
+                              <span>On campus</span>
                             </div>
                             <div className="tags"><span>MOST POPULAR</span><span>5% STUDENT DEAL</span><span>CRAVE $</span></div>
                           </div>
@@ -418,11 +374,11 @@ export default function PitchPage() {
 
                         <div className="rest-card secondary">
                           <div className="pic">
-                            <div className="badge" style={{ background: 'rgba(120,120,120,.5)' }}>OPENS 5:30PM</div>
+                            <div className="badge" style={{ background: 'rgba(120,120,120,.5)' }}>OPEN · 10–20 MIN</div>
                           </div>
                           <div className="info">
-                            <div className="rname"><h4>SkyBar Rooftop</h4><div className="star">★ 4.6 · 812</div></div>
-                            <div className="meta-line"><span>Burgers · American</span><span className="dot">·</span><span>$$</span></div>
+                            <div className="rname"><h4>Green Lemon</h4><div className="star">★ 4.8 · 2,340</div></div>
+                            <div className="meta-line"><span>Tacos · Fiesta Bowls</span><span className="dot">·</span><span>$$</span></div>
                           </div>
                         </div>
                       </div>
@@ -450,19 +406,19 @@ export default function PitchPage() {
                         </div>
                         <div className="rest-head">
                           <div className="chip"><span className="d" />OPEN · PICKUP NOW</div>
-                          <h2>Green <em>Lemon</em></h2>
+                          <h2>Campus Crave <em>Café</em></h2>
                           <div className="tagline">
-                            Mexican restaurant and margarita bar in South Tampa.
-                            Street tacos, fiesta bowls, and the strongest margaritas in SoHo.
+                            The student-run café on campus. Fresh bakery,
+                            hot coffee, and grab-and-go snacks between classes.
                           </div>
                           <div className="rest-stats">
-                            <div className="rs"><span className="i">★</span><b>4.8</b><span>(2,340)</span></div>
-                            <div className="rs"><span className="i">⏱</span><b>10–20</b><span>min</span></div>
-                            <div className="rs"><span className="i">◉</span><b>1.2</b><span>mi away</span></div>
+                            <div className="rs"><span className="i">★</span><b>4.9</b><span>(1,284)</span></div>
+                            <div className="rs"><span className="i">⏱</span><b>5–10</b><span>min</span></div>
+                            <div className="rs"><span className="i">◉</span><b>On</b><span>campus</span></div>
                           </div>
                         </div>
                         <div className="menu-tabs">
-                          {['Signature', 'Fiesta Bowls', 'Chips & Dips', 'Tacos', 'Margaritas'].map((t) => (
+                          {['Popular', 'Bakery', 'Coffee', 'Snacks', 'Drinks'].map((t) => (
                             <div
                               key={t}
                               className={`mt ${menuTab === t ? 'on' : ''}`}
@@ -504,8 +460,8 @@ export default function PitchPage() {
                       <div className="addr">
                         <span className="p">◉</span>
                         <div>
-                          <b>Pickup · Green Lemon</b>
-                          South Tampa · 1.2 mi from campus
+                          <b>Pickup · Campus Crave Café</b>
+                          On campus · ready in ~6 min
                         </div>
                       </div>
                       {cartDetailed.map((c) => (
@@ -531,18 +487,20 @@ export default function PitchPage() {
                         <div className="trow"><span>Tax</span><span>${tax.toFixed(2)}</span></div>
                         <div className="trow tot"><span>Total</span><span className="v">${total.toFixed(2)}</span></div>
                       </div>
-                      <button className="place" onClick={() => goto('track')}>
-                        <span>Place order · Pay with Dining Dollars</span>
-                        <span className="arr">→</span>
-                      </button>
-                      <div className="eta">PICKUP ETA · <b>6 MIN</b> · GREEN LEMON COUNTER</div>
+                      <div className="slide-wrap">
+                        <SwipeButton
+                          label="Slide to order · Dining Dollars"
+                          onSuccess={() => goto('track')}
+                        />
+                      </div>
+                      <div className="eta">PICKUP ETA · <b>6 MIN</b> · CAMPUS CRAVE CAFÉ COUNTER</div>
                     </div>
 
                     {/* 6 TRACK */}
                     <div className={`page track ${page === 'track' ? 'active' : ''}`}>
                       <div className="ord">ORDER · #CC-2487</div>
                       <h2>Your order is <em>being prepared.</em></h2>
-                      <div className="sub">Green Lemon kitchen is on it.<br />You'll get a ping when it's ready to pick up.</div>
+                      <div className="sub">Campus Crave Café is on it.<br />You'll get a ping when it's ready to pick up.</div>
 
                       <div className="timer-wrap">
                         <svg className="tring" viewBox="0 0 240 240">
@@ -575,9 +533,9 @@ export default function PitchPage() {
                       </div>
 
                       <div className="courier">
-                        <div className="ph">GL</div>
+                        <div className="ph">CC</div>
                         <div className="info2">
-                          <div className="ln1">Green Lemon · South Tampa</div>
+                          <div className="ln1">Campus Crave Café · On Campus</div>
                           <div className="ln2">Kitchen · prepping your order</div>
                         </div>
                         <div className="ic">
@@ -596,7 +554,7 @@ export default function PitchPage() {
                       <div className="lbl2">READY FOR PICKUP</div>
                       <h2>Your order is <em>ready.</em></h2>
                       <div className="msg">
-                        Head to the <b>Green Lemon</b> counter and show this PIN
+                        Head to the <b>Campus Crave Café</b> counter and show this PIN
                         to the team. Thanks, Matías.
                       </div>
                       <div className="pcard">
@@ -620,41 +578,12 @@ export default function PitchPage() {
           </div>
         </div>
 
-        {/* DOCK */}
-        <div className="pitchdock">
-          {[
-            ['splash', 'Splash'],
-            ['login', 'Login'],
-            ['home', 'Home'],
-            ['rest', 'Restaurant'],
-            ['cart', 'Cart'],
-            ['track', 'Tracking'],
-            ['ready', 'Ready'],
-          ].map(([key, label], i) => (
-            <button
-              key={key}
-              className={`ph ${page === key ? 'active' : ''}`}
-              onClick={() => goto(key)}
-            >
-              <span className="idx">{i + 1}</span>{label}
-            </button>
-          ))}
-          <div className="sep" />
-          <button className="rst" onClick={reset}><span>↻</span>Reset</button>
-        </div>
+        {/* Small Reset — only external control */}
+        <button className="reset-corner" onClick={reset} title="Reset demo (R)">
+          <span>↻</span> Reset
+        </button>
 
-        <div className="left-bot">
-          <span>v1.0 · Pitch Build</span>
-          <span className="ln" />
-          <span>University of Tampa · Pilot</span>
-          <span className="ln" />
-          <span><b>F</b>&nbsp;&nbsp;fullscreen</span>
-        </div>
-
-        <div className="sig">
-          CAMPUSCRAVE · INC<br />
-          <b>PITCH · LIVE</b>
-        </div>
+        <div className="sig">Campus Crave Corp.</div>
       </div>
     </div>
   )
