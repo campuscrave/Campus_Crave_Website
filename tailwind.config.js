@@ -19,8 +19,8 @@ export default {
         'muted-light':        '#9CA3AF',
       },
       fontFamily: {
-        display: ['Outfit', 'sans-serif'],
-        body: ['"Plus Jakarta Sans"', 'sans-serif'],
+        display: ['Poppins', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'sans-serif'],
+        body:    ['Poppins', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'sans-serif'],
       },
       borderRadius: {
         card: '16px',

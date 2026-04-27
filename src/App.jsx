@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { initAnalytics } from './lib/analytics'
 import ExpoDashboard from './pages/ExpoDashboard'
@@ -17,14 +17,30 @@ import CTA from './sections/CTA'
 import PhoneShowcase from './sections/PhoneShowcase'
 import IDShowcase from './sections/IDShowcase'
 import CraveAI from './components/CraveAI'
+import DoorDashIntro from './components/DoorDashIntro'
 
 export default function App() {
   return (
     <Routes>
       <Route path="/expo/dashboard" element={<ExpoDashboard />} />
-      <Route path="/pitch" element={<PitchPage />} />
+      <Route path="/pitch" element={<PitchWithIntro />} />
       <Route path="*" element={<MarketingSite />} />
     </Routes>
+  )
+}
+
+// /pitch — DoorDash parody intro sits on top of the demo.
+// PitchPage is mounted underneath immediately so the CampusCrave splash
+// glows through the fade-out. introVisible is passed down so PitchPage
+// suspends its own SPACE handler while the intro is covering the screen.
+function PitchWithIntro() {
+  const [introVisible, setIntroVisible] = useState(true)
+
+  return (
+    <>
+      <PitchPage introVisible={introVisible} />
+      {introVisible && <DoorDashIntro onComplete={() => setIntroVisible(false)} />}
+    </>
   )
 }
 
@@ -57,4 +73,3 @@ function MarketingSite() {
     </>
   )
 }
-
